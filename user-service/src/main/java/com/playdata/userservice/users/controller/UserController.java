@@ -1,7 +1,8 @@
-package com.playdata.userservice.controller;
+package com.playdata.userservice.users.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,9 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class UserController {
 
-    @GetMapping("test")
+    @GetMapping("/test")
     public String test() {
         return "test";
     }
+//
+//    @GetMapping("/insert")
+//    public String insert(@AuthenticationPrincipal TokenUserInfo userInfo) {}
 
 }
