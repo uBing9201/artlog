@@ -9,16 +9,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
+
+    List<String> allowedUrls = List.of(
+            "/user/login", "/user/insert"
+    );
 
     /**
      * @param request JwtAuthFilter에 들어오는 요청
@@ -29,12 +36,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if(allowedUrls.contains(request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         // 토큰이 유효한지 다시 한번 확인
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().println("Token invalid");
                 filterChain.doFilter(request, response);
                 return;
         }
@@ -45,10 +56,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (claim != null) {
             String username = claim.getSubject();
             // ROLE 생기면 추가
-//             claim.get("role", String.class);
+            String role = claim.get("role", String.class);
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
             // SecurityContextHolder에 username 추가
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, null);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

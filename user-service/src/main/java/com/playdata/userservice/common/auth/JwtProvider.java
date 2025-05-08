@@ -11,9 +11,9 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtProvider {
-    @Value("${spring.jwt.secretKey}")
+    @Value("${jwt.secretKey}")
     private String secretKey;
-    @Value("${spring.jwt.expiration")
+    @Value("${jwt.expiration}")
     private Long expiration; // 분 단위
 
     /**
@@ -27,7 +27,7 @@ public class JwtProvider {
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
-//                .claim("role", role)
+                .claim("role", "ROLE_USER")
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }

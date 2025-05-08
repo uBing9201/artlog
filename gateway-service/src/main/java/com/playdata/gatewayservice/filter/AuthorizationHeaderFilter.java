@@ -21,17 +21,10 @@ import javax.security.auth.Subject;
 
 @Component
 @Slf4j
-public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
-    @Value("${spring.jwt.secret}")
+public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Object> {
+    @Value("${jwt.secretKey}")
     private String secretKey;
 
-    /**
-     * @param
-     * @return
-     */
-    public AuthorizationHeaderFilter() {
-        super(Config.class);
-    }
 
     /**
      *
@@ -39,10 +32,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
      * @return token의 유무와 정상적인 token인지 확인하는 Filter
      */
     @Override
-    public GatewayFilter apply(Config config) {
+    public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            ServerHttpResponse response = exchange.getResponse();
 
             if(!request.getHeaders().containsKey("Authorization")) {
                 return onError(exchange, "No Authorization Header");
@@ -95,5 +87,4 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return Mono.error(new NotAuthorizedException(message));
     }
 
-    class Config {}
 }
