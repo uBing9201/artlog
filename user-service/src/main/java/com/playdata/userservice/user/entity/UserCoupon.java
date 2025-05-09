@@ -1,4 +1,4 @@
-package com.playdata.userservice.users.entity;
+package com.playdata.userservice.user.entity;
 
 import com.playdata.userservice.common.entity.YnType;
 import jakarta.persistence.Column;

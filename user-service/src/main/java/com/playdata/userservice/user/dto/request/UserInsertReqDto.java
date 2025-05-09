@@ -1,7 +1,7 @@
-package com.playdata.userservice.users.dto.request;
+package com.playdata.userservice.user.dto.request;
 
 import com.playdata.userservice.common.entity.HintKeyType;
-import com.playdata.userservice.users.entity.User;
+import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.common.entity.YnType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

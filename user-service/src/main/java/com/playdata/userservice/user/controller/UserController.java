@@ -1,15 +1,18 @@
-package com.playdata.userservice.users.controller;
+package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
-import com.playdata.userservice.users.dto.request.UserInsertReqDto;
-import com.playdata.userservice.users.dto.request.UserLoginDto;
-import com.playdata.userservice.users.dto.request.UserReqDto;
-import com.playdata.userservice.users.entity.User;
-import com.playdata.userservice.users.service.UserService;
+import com.playdata.userservice.user.dto.request.UserInsertReqDto;
+import com.playdata.userservice.user.dto.request.UserLoginDto;
+import com.playdata.userservice.user.entity.User;
+import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 유저 생성
@@ -42,9 +46,25 @@ public class UserController {
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginDto reqDto) {
-        return null;
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginDto loginDto) {
+
+        User user = userService.login(loginDto);
+        String token = jwtProvider.createToken(String.valueOf(user.getId()), user.getRole().toString());
+        String refreshToken = jwtProvider.createRefreshToken(
+                String.valueOf(user.getId()), user.getRole().toString());
+
+        redisTemplate.opsForValue().set("user:refresh:" + user.getUserId(), refreshToken, 2, TimeUnit.MINUTES);
+
+        Map<String, Object> loginInfo = new HashMap<>();
+        loginInfo.put("token", token);
+        loginInfo.put("id", user.getId());
+        loginInfo.put("role", user.getRole().toString());
+
+        CommonResDto resDto
+                = new CommonResDto(HttpStatus.OK,
+                "Login Success", loginInfo);
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
     @GetMapping("/test")

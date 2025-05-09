@@ -1,4 +1,4 @@
-package com.playdata.userservice.users.entity;
+package com.playdata.userservice.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

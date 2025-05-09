@@ -1,4 +1,4 @@
-package com.playdata.userservice.users.dto.request;
+package com.playdata.userservice.user.dto.request;
 
 import lombok.*;
 
@@ -6,6 +6,6 @@ import lombok.*;
 @Builder @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginDto {
-    private String user_id;
+    private String userId;
     private String password;
 }

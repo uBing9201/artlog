@@ -1,4 +1,4 @@
-package com.playdata.userservice.users.entity;
+package com.playdata.userservice.user.entity;
 
 import com.playdata.userservice.common.converter.HintKeyTypeConverter;
 import com.playdata.userservice.common.converter.YnTypeConverter;
@@ -9,6 +9,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -59,6 +61,11 @@ public class User extends BaseTimeEntity {
     @Convert(converter = YnTypeConverter.class)
     @Column(nullable = false, length = 1)
     private YnType active;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default // builder 패턴 사용해서 객체 초기화 시 초기값으로 세팅
+    @Column(name = "user_role")
+    private Role role = Role.USER;
 
     // CascadeType.PERSIST로 설정하면 새로운 엔터티 생성만 처리하고 기존 엔터티 업데이트는
     // 자동으로 처리되지 않습니다. -> MERGE (부모 엔터티 업데이트 시 연관 엔터티도 함께 업데이트)
