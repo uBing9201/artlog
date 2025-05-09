@@ -29,6 +29,7 @@ public class CouponController {
      * @return 등록 완료되면 CouponSaveResDto 반환
      * @throws InvalidCouponRegisterException 등록 실패
      */
+
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@RequestBody CouponReqDto dto) throws InvalidCouponRegisterException {
         CouponSaveResDto resDto = couponService.insert(dto);

@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ReviewSaveReqDto {
     private Long userKey;
-    private Long orderKey;
+    private Long contentId;
     private String reviewContent = null;
     private String picUrl = null;
 }

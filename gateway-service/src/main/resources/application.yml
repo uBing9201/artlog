@@ -68,6 +68,18 @@ spring:
             - RewritePath=/review-service/(?<segment>.*), /$\{segment}
             - name: AuthorizationHeaderFilter
 #
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/order/**
+          filters:
+            - name: GlobalFilter
+              args:
+                baseMessage: pass
+                preLogger: true
+                postLogger: true
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+            - name: AuthorizationHeaderFilter
 #        - id: user-service
 #          uri: lb://USER-SERVICE
 #          predicates:

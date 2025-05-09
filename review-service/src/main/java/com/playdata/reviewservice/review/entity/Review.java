@@ -12,11 +12,11 @@ public class Review extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Long userKey;
 
-    @Column(nullable = false, unique = true)
-    private Long orderKey;
+    @Column(nullable = false)
+    private Long contentId;
 
     @Column(nullable = true)
     @Setter

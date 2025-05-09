@@ -17,11 +17,13 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     public ReviewResDto insert(ReviewSaveReqDto dto) {
+        // TODO: Feign 사용하여 order 정보 있는지 확인 후 등록 진행
+
         Review review = Review.builder()
                 .reviewContent(dto.getReviewContent())
                 .userKey(dto.getUserKey())
-                .orderKey(dto.getOrderKey())
                 .pirUrl(dto.getPicUrl())
+                .contentId(dto.getContentId())
                 .active(YnType.Y)
                 .deleted(YnType.N)
                 .build();
@@ -45,7 +47,6 @@ public class ReviewService {
         return ReviewResDto.builder()
                 .id(id)
                 .build();
-
     }
 
     @Transactional
