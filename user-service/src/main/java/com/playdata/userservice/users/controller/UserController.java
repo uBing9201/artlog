@@ -1,10 +1,11 @@
 package com.playdata.userservice.users.controller;
 
 import com.playdata.userservice.users.dto.UserLoginDto;
-import com.playdata.userservice.users.dto.UserReqDto;
+import com.playdata.userservice.users.dto.request.UserReqDto;
 import com.playdata.userservice.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,8 @@ public class UserController {
     }
 
     @GetMapping("/test")
-    public String test(@AuthenticationPrincipal String username) {
-        return username;
+    public ResponseEntity<?> test() {
+        return new ResponseEntity<>("test ok", HttpStatus.OK);
     }
 
 }

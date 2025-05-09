@@ -1,4 +1,4 @@
-package com.playdata.userservice.users.dto;
+package com.playdata.userservice.users.dto.request;
 
 import lombok.*;
 
