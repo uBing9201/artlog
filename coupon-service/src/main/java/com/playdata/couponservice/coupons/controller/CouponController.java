@@ -1,11 +1,19 @@
 package com.playdata.couponservice.coupons.controller;
 
-import com.playdata.couponservice.coupons.dto.CouponReqDto;
+import com.playdata.couponservice.common.exception.InvalidCouponAccessException;
+import com.playdata.couponservice.common.exception.InvalidCouponRegisterException;
+import com.playdata.couponservice.coupons.dto.request.CouponReqDto;
+import com.playdata.couponservice.coupons.dto.response.CouponCountResDto;
+import com.playdata.couponservice.coupons.dto.response.CouponResDto;
+import com.playdata.couponservice.coupons.dto.response.CouponSaveResDto;
+import com.playdata.couponservice.coupons.dto.response.CouponValidateDto;
 import com.playdata.couponservice.coupons.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/coupon")
@@ -14,25 +22,46 @@ import org.springframework.web.bind.annotation.*;
 public class CouponController {
     private final CouponService couponService;
 
+    /**
+     * @param dto CouponReqDto
+     * @return 등록 완료되면 CouponSaveResDto 반환
+     * @throws InvalidCouponRegisterException 등록 실패
+     */
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody CouponReqDto dto) {
-
-        return null;
+    public ResponseEntity<?> insert(@RequestBody CouponReqDto dto) throws InvalidCouponRegisterException {
+        CouponSaveResDto resDto = couponService.insert(dto);
+        return ResponseEntity.ok().body(resDto);
     }
 
-    @GetMapping("/isValid/{expireDate}")
-    public ResponseEntity<?> isValid(@PathVariable String expireDate) {
-        return null;
+    /**
+     * @param id 찾을 쿠폰의 id
+     * @return CouponValidateDto 유효한지에 대한 정보 반환
+     */
+    @GetMapping("/isValid/{id}")
+    public ResponseEntity<?> isValid(@PathVariable Long id) {
+        CouponValidateDto resDto = couponService.isValid(id);
+        return ResponseEntity.ok().body(resDto);
     }
 
+    /**
+     * @return 유효한 모든 쿠폰 조회 결과 반환
+     */
     @GetMapping("/findByAll")
     public ResponseEntity<?> findByAll() {
-        return null;
+        List<CouponResDto> resDtoList = couponService.findByAll();
+        return ResponseEntity.ok().body(resDtoList);
+
     }
 
-    @PostMapping("/findByCount/{id}")
-    public ResponseEntity<?> findByCount(@PathVariable Long id) {
-        return null;
+    /**
+     * @param id 찾을 쿠폰의 id
+     * @return CouponCountResDto 쿠폰의 이름과 수량 정보 반환
+     * @throws InvalidCouponAccessException 잘못된 쿠폰에 대한 접근
+     */
+    @GetMapping("/findCountById/{id}")
+    public ResponseEntity<?> findCountById(@PathVariable Long id) throws InvalidCouponAccessException {
+        CouponCountResDto resDto= couponService.findCountById(id);
+        return ResponseEntity.ok().body(resDto);
     }
 
 }
