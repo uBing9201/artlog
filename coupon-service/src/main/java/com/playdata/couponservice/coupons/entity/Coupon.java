@@ -22,7 +22,6 @@ public class Coupon extends BaseTimeEntity {
     private String serialNumber;
 
     @Column(nullable = true)
-
     private LocalDateTime expireDate;
 
     @Column(nullable = true)

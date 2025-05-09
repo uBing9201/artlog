@@ -54,6 +54,18 @@ spring:
                 preLogger: true
                 postLogger: true
             - RewritePath=/coupon-service/(?<segment>.*), /$\{segment}
+
+        - id: review-service
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review-service/review/**
+          filters:
+            - name: GlobalFilter
+              args:
+                baseMessage: pass
+                preLogger: true
+                postLogger: true
+            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
 #
 #        - id: user-service
 #          uri: lb://USER-SERVICE
