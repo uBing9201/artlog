@@ -35,7 +35,6 @@ public class UserInsertReqDto {
     private String email;
     @NotEmpty(message = "전화번호는 필수입니다!")
     private String phone;
-    private YnType active;
 
     public User toEntity(PasswordEncoder encoder) {
         return User.builder()
@@ -46,7 +45,6 @@ public class UserInsertReqDto {
                 .userName(userName)
                 .email(email)
                 .phone(phone)
-                .active(YnType.YES)
                 .build();
     }
 }
