@@ -14,24 +14,52 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtProvider {
+
     @Value("${jwt.secretKey}")
     private String secretKey;
+
     @Value("${jwt.expiration}")
-    private Long expiration; // 분 단위
+    private Long expiration;
+
+    @Value("${jwt.secretKeyRt}")
+    private String secretKeyRt;
+
+    @Value("${jwt.expirationRt}")
+    private int expirationRt;
 
     /**
-     * @param username 토큰에 심을 유저 정보
+     * jwt 토큰 발행
+     * @param id 토큰에 심을 유저 정보
+     * @param role 토큰에 저장할 유저 롤
      * @return token 발급
      */
-    public String createToken(String username) {
+    public String createToken(String id, String role) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + (expiration * 1000 * 60L));
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(id)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
-                .claim("role", "ROLE_USER")
+                .claim("role", role)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+    }
+
+    /**
+     * jwt 토큰 재발행
+     * @param id
+     * @param role
+     * @return
+     */
+    public String createRefreshToken(String id, String role){
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + (expirationRt * 60L * 1000));
+        return Jwts.builder()
+                .setSubject(id)
+                .setIssuedAt(now)
+                .setExpiration(expirationDate)
+                .claim("role", role)
+                .signWith(SignatureAlgorithm.HS256, secretKeyRt) // 서명을 어떤 알고리즘으로 암호화 할 지
                 .compact();
     }
 
