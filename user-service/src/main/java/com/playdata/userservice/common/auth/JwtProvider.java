@@ -28,7 +28,7 @@ public class JwtProvider {
      * jwt 토큰 발행
      * @param id 토큰에 심을 유저 정보
      * @param role 토큰에 저장할 유저 롤
-     * @return token 발급
+     * @return token 발행
      */
     public String createToken(String id, String role) {
         Date now = new Date();
@@ -44,9 +44,9 @@ public class JwtProvider {
 
     /**
      * jwt 토큰 재발행
-     * @param id
-     * @param role
-     * @return
+     * @param id 토큰에 심을 유저 정보
+     * @param role 토큰에 저장할 유저 롤
+     * @return token 재발행
      */
     public String createRefreshToken(String id, String role){
         Date now = new Date();
@@ -56,7 +56,7 @@ public class JwtProvider {
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .claim("role", role)
-                .signWith(SignatureAlgorithm.HS256, secretKeyRt) // 서명을 어떤 알고리즘으로 암호화 할 지
+                .signWith(SignatureAlgorithm.HS512, secretKeyRt) // 서명을 어떤 알고리즘으로 암호화 할 지
                 .compact();
     }
 

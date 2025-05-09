@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,17 +54,19 @@ public class User extends BaseTimeEntity {
     private String userName;
 
     @Column(nullable = false, unique = true)
+    @Email
     private String email;
 
     @Column(nullable = false, unique = true)
     private String phone;
 
     @Convert(converter = YnTypeConverter.class)
+    @Builder.Default
     @Column(nullable = false, length = 1)
-    private YnType active;
+    private YnType active = YnType.YES;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default // builder 패턴 사용해서 객체 초기화 시 초기값으로 세팅
+    @Builder.Default
     @Column(name = "user_role")
     private Role role = Role.USER;
 
@@ -71,4 +74,12 @@ public class User extends BaseTimeEntity {
     // 자동으로 처리되지 않습니다. -> MERGE (부모 엔터티 업데이트 시 연관 엔터티도 함께 업데이트)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCoupon> userCoupons;
+
+    public void updateUser(HintKeyType hintKey, String hintValue, String email, String phone) {
+        this.hintKey = hintKey;
+        this.hintValue = hintValue;
+        this.email = email;
+        this.phone = phone;
+    }
+
 }
