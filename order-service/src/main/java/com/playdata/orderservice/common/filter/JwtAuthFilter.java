@@ -1,6 +1,6 @@
-package com.playdata.reviewservice.common.filter;
+package com.playdata.orderservice.common.filter;
 
-import com.playdata.reviewservice.common.auth.JwtProvider;
+import com.playdata.orderservice.common.auth.JwtProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
-
 
     /**
      * @param request JwtAuthFilter에 들어오는 요청
