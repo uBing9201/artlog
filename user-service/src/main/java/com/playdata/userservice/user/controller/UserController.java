@@ -72,6 +72,14 @@ public class UserController {
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id) {
+
+        userService.update(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/test")
     public ResponseEntity<?> test() {
         return new ResponseEntity<>("test ok", HttpStatus.OK);

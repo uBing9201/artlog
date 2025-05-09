@@ -1,8 +1,8 @@
 package com.playdata.userservice.user.entity;
 
+import com.playdata.userservice.common.entity.BaseTimeEntity;
 import com.playdata.userservice.common.entity.YnType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,7 +26,7 @@ import lombok.ToString;
 @Builder
 @Entity
 @Table(name = "UserCoupons")
-public class UserCoupon {
+public class UserCoupon extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +42,5 @@ public class UserCoupon {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 1)
     private YnType active;
-
-    @Embedded
-    private BaseEntity baseEntity;
 
 }
