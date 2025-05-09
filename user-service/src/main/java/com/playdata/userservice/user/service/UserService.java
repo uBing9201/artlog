@@ -2,6 +2,7 @@ package com.playdata.userservice.user.service;
 
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
+import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class UserService {
      * @param insertDto 유저 생성 dto
      * @return 저장된 user 객체 전달
      */
+    @Transactional
     public User userInsert(UserInsertReqDto insertDto) {
         validateDuplicate("ID", userRepository.findByUserId(insertDto.getUserId()));
         validateDuplicate("이메일", userRepository.findByEmail(insertDto.getEmail()));
@@ -47,6 +50,19 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
+        return user;
+    }
+
+    /**
+     * 회원정보 수정
+     * @param id
+     * @param updateDto
+     */
+    @Transactional
+    public User update(Long id, UserUpdateReqDto updateDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        user.updateUser(updateDto.getHintKey(), updateDto.getHintValue(), updateDto.getEmail(), updateDto.getPhone());
         return user;
     }
 

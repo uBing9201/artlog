@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,6 +54,7 @@ public class User extends BaseTimeEntity {
     private String userName;
 
     @Column(nullable = false, unique = true)
+    @Email
     private String email;
 
     @Column(nullable = false, unique = true)
@@ -73,8 +75,11 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCoupon> userCoupons;
 
-//    public void updateUser() {
-//
-//    }
+    public void updateUser(HintKeyType hintKey, String hintValue, String email, String phone) {
+        this.hintKey = hintKey;
+        this.hintValue = hintValue;
+        this.email = email;
+        this.phone = phone;
+    }
 
 }

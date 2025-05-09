@@ -4,6 +4,7 @@ import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
+import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
@@ -41,9 +42,9 @@ public class UserController {
 
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.CREATED,
-                "User Insert", saved.getUserId());
+                "회원가입 완료", saved.getUserId());
 
-        return new ResponseEntity<>(resDto, HttpStatus.CREATED);
+        return ResponseEntity.ok().body(resDto);
     }
 
     /**
@@ -66,18 +67,23 @@ public class UserController {
         loginInfo.put("id", user.getId());
         loginInfo.put("role", user.getRole().toString());
 
-        CommonResDto resDto
-                = new CommonResDto(HttpStatus.OK,
-                "Login Success", loginInfo);
-        return new ResponseEntity<>(resDto, HttpStatus.OK);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK,
+                "로그인 성공", loginInfo);
+        return ResponseEntity.ok(resDto);
     }
 
+    /**
+     * 회원정보수정
+     * @param id
+     * @param updateDto
+     * @return
+     */
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserUpdateReqDto updateDto) {
+        User user = userService.update(id, updateDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "회원정보 수정완료", user.getId());
 
-        userService.update(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().body(resDto);
     }
 
     @GetMapping("/test")

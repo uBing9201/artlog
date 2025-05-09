@@ -1,6 +1,5 @@
 package com.playdata.userservice.common.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 /**
