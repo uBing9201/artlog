@@ -86,9 +86,16 @@ public class UserController {
         return ResponseEntity.ok().body(resDto);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        return new ResponseEntity<>("test ok", HttpStatus.OK);
-    }
+    /**
+     * 회원 탈퇴
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        User user = userService.delete(id);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "회원탈퇴 완료", user.getId());
 
+        return ResponseEntity.ok().body(resDto);
+    }
 }

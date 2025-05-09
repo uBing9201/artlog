@@ -26,7 +26,6 @@ public class UserService {
      * @param insertDto 유저 생성 dto
      * @return 저장된 user 객체 전달
      */
-    @Transactional
     public User userInsert(UserInsertReqDto insertDto) {
         validateDuplicate("ID", userRepository.findByUserId(insertDto.getUserId()));
         validateDuplicate("이메일", userRepository.findByEmail(insertDto.getEmail()));
@@ -63,6 +62,18 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         user.updateUser(updateDto.getHintKey(), updateDto.getHintValue(), updateDto.getEmail(), updateDto.getPhone());
+        return user;
+    }
+
+    /**
+     * 회원 탈퇴
+     * @param id
+     * @return
+     */
+    @Transactional
+    public User delete(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        user.deleteUser();
         return user;
     }
 
