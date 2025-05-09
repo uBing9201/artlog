@@ -46,6 +46,11 @@ public class UserController {
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
     }
 
+    /**
+     * 유저 로그인
+     * @param loginDto 로그인 DTO
+     * @return id, 토큰값, role 정보
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDto loginDto) {
 

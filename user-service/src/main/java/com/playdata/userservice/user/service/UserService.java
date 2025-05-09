@@ -33,7 +33,7 @@ public class UserService {
     }
 
     /**
-     * 로그인
+     * 유저 로그인
      * @param loginDto 로그인 DTO
      * @return 회원 로그인
      */
