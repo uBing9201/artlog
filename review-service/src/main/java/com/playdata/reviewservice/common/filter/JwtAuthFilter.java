@@ -1,6 +1,8 @@
 package com.playdata.reviewservice.common.filter;
 
 import com.playdata.reviewservice.common.auth.JwtProvider;
+import com.playdata.reviewservice.common.auth.Role;
+import com.playdata.reviewservice.common.auth.TokenUserInfo;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,10 +23,6 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
-    List<String> allowedUrls = List.of(
-            "/review/insert", "/review/update/{id}", "/review/delete", "/review/list"
-    );
-
     /**
      * @param request JwtAuthFilter에 들어오는 요청
      * @param response 다음 필터로 넘길 응답
@@ -34,10 +32,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(allowedUrls.contains(request.getRequestURI())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String authHeader = request.getHeader("Authorization");
 
@@ -50,16 +44,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // 토큰 까서 SecurityContextHolder에 username 등록
         String token = authHeader.replace("Bearer ", "");
-
         Claims claim = jwtProvider.getClaim(token);
         if (claim != null) {
-            String username = claim.getSubject();
+            Long id = Long.valueOf(claim.getSubject());
             // ROLE 생기면 추가
             String role = claim.get("role", String.class);
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
             // SecurityContextHolder에 username 추가
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(new TokenUserInfo(id, Role.valueOf(role)), null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

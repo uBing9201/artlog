@@ -66,6 +66,7 @@ spring:
                 preLogger: true
                 postLogger: true
             - RewritePath=/review-service/(?<segment>.*), /$\{segment}
+            - name: AuthorizationHeaderFilter
 #
 #        - id: user-service
 #          uri: lb://USER-SERVICE
@@ -74,7 +75,6 @@ spring:
 #          filters:
 #            - RemoveRequestHeader=Cookie
 #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-#            - name: AuthorizationHeaderFilter
 
 logging:
   level:
