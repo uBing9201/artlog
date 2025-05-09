@@ -10,8 +10,7 @@ spring:
         cors-configurations:
           "[/**]": # 모든 경로에 대한 CORS 설정을 시작하겠다.
             allowed-origins:
-              - "로컬 서버 연결 호스트 주소"
-              - "aws 연결된 url 주소"
+              - http://artlog-s3-front-end-1733.s3-website-ap-southeast-2.amazonaws.com/
             allowed-methods:
               - GET
               - POST
@@ -35,7 +34,24 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/**
+            - Path=/user-service/user/**
           filters:
-            - RemoveRequestHeader=Cookie
+            - name: GlobalFilter
+              args:
+                baseMessage: pass
+                preLogger: true
+                postLogger: true
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#            - name: AuthorizationHeaderFilter
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
