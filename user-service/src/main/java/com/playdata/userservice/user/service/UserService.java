@@ -2,7 +2,9 @@ package com.playdata.userservice.user.service;
 
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
+import com.playdata.userservice.user.dto.request.UserUpdatePasswordReqDto;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
+import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -60,7 +62,7 @@ public class UserService {
     @Transactional
     public User update(Long id, UserUpdateReqDto updateDto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         user.updateUser(updateDto.getHintKey(), updateDto.getHintValue(), updateDto.getEmail(), updateDto.getPhone());
         return user;
     }
@@ -72,7 +74,7 @@ public class UserService {
      */
     @Transactional
     public User delete(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         user.deleteUser();
         return user;
     }
@@ -86,5 +88,46 @@ public class UserService {
         result.ifPresent(user -> {
             throw new IllegalArgumentException("이미 존재하는 " + fieldName + " 입니다!");
         });
+    }
+
+    /**
+     * 계정찾기 - 이메일로 힌트 요청
+     * @param email
+     * @return
+     */
+    public User findByHint(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("가입된 이메일이 존재하지 않습니다.")
+        );
+    }
+
+    /**
+     * 계정찾기 - 힌트 답 검증
+     * @param reqDto
+     * @return
+     */
+    public User findByHintValue(UserVerifyHintReqDto reqDto) {
+        User user = userRepository.findByUserId(reqDto.getUserId()).orElseThrow(
+                () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
+        );
+
+        if (!reqDto.getHintValue().equals(user.getHintValue())) {
+            throw new IllegalArgumentException("힌트 답변 내용이 일치하지 않습니다.");
+        }
+
+        return user;
+    }
+
+    /**
+     * 계정찾기 - 비밀번호 변경
+     * @param reqDto
+     */
+    @Transactional
+    public User updatePassword(UserUpdatePasswordReqDto reqDto) {
+        User user = userRepository.findByUserId(reqDto.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        String encodedPassword = encoder.encode(reqDto.getPassword());
+        user.updatePassword(encodedPassword);
+        return user;
     }
 }

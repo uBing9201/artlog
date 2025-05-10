@@ -2,25 +2,20 @@ package com.playdata.userservice.user.dto.request;
 
 import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.user.entity.User;
-import com.playdata.userservice.common.entity.YnType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Getter
-@Setter
-@ToString
+@Getter @Setter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class UserInsertReqDto {
 
     @NotEmpty(message = "아이디는 필수입니다!")
