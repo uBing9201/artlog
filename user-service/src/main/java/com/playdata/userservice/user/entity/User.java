@@ -70,16 +70,28 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_role")
     private Role role = Role.USER;
 
-    // CascadeType.PERSIST로 설정하면 새로운 엔터티 생성만 처리하고 기존 엔터티 업데이트는
-    // 자동으로 처리되지 않습니다. -> MERGE (부모 엔터티 업데이트 시 연관 엔터티도 함께 업데이트)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCoupon> userCoupons;
 
+    /**
+     * 회원정보 수정
+     * @param hintKey
+     * @param hintValue
+     * @param email
+     * @param phone
+     */
     public void updateUser(HintKeyType hintKey, String hintValue, String email, String phone) {
         this.hintKey = hintKey;
         this.hintValue = hintValue;
         this.email = email;
         this.phone = phone;
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    public void deleteUser() {
+        this.active = YnType.NO;
     }
 
 }
