@@ -4,7 +4,6 @@ import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
-import com.playdata.userservice.user.dto.request.UserUpdatePasswordReqDto;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
@@ -111,7 +110,7 @@ public class UserController {
     public ResponseEntity<?> findByHintKey(@RequestParam String email) {
         User user = userService.findByHint(email);
         UserHintKeyResDto hintKeyResDto = new UserHintKeyResDto(user);
-        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 힌트 요청 성공", hintKeyResDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "계정찾기 요청 성공", hintKeyResDto);
         return ResponseEntity.ok().body(resDto);
     }
 
@@ -123,26 +122,7 @@ public class UserController {
     @PostMapping("/verifyHint")
     public ResponseEntity<?> verifyHint(@RequestBody UserVerifyHintReqDto reqDto) {
         User user = userService.findByHintValue(reqDto);
-        redisTemplate.opsForValue().set("user:verifyHint:" + user.getUserId(), "true", 5, TimeUnit.MINUTES);
-        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "5분 안에 새로운 비밀번호를 입력해주세요.", user.getUserId());
-        return ResponseEntity.ok().body(resDto);
-    }
-
-    /**
-     * 계정찾기 - 비밀번호 변경
-     * @param reqDto
-     * @return
-     */
-    @PostMapping("/updatePassword")
-    public ResponseEntity<?> updatePassword(@RequestBody UserUpdatePasswordReqDto reqDto) {
-        String redisKey = "user:verifyHint:" + reqDto.getUserId();
-        Object verified = redisTemplate.opsForValue().get(redisKey);
-        if (!"true".equals(verified)) {
-            throw new IllegalStateException("힌트 검증이 완료되지 않았습니다.");
-        }
-        User user = userService.updatePassword(reqDto);
-        redisTemplate.delete(redisKey);
-        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경이 완료되었습니다.", user.getEmail());
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "계정찾기 성공", user.getUserId());
         return ResponseEntity.ok().body(resDto);
     }
 }

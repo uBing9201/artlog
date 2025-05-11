@@ -1,5 +1,6 @@
 package com.playdata.userservice.user.service;
 
+import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePasswordReqDto;
@@ -107,27 +108,13 @@ public class UserService {
      * @return
      */
     public User findByHintValue(UserVerifyHintReqDto reqDto) {
-        User user = userRepository.findByUserId(reqDto.getUserId()).orElseThrow(
-                () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
+        User user = userRepository.findByEmailAndHintKey(reqDto.getEmail(),
+                HintKeyType.fromCode(reqDto.getHintKey())).orElseThrow(
+                () -> new EntityNotFoundException("찾으려고하는 계정이 존재하지 않습니다.")
         );
-
         if (!reqDto.getHintValue().equals(user.getHintValue())) {
             throw new IllegalArgumentException("힌트 답변 내용이 일치하지 않습니다.");
         }
-
-        return user;
-    }
-
-    /**
-     * 계정찾기 - 비밀번호 변경
-     * @param reqDto
-     */
-    @Transactional
-    public User updatePassword(UserUpdatePasswordReqDto reqDto) {
-        User user = userRepository.findByUserId(reqDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-        String encodedPassword = encoder.encode(reqDto.getPassword());
-        user.updatePassword(encodedPassword);
         return user;
     }
 }
