@@ -5,11 +5,11 @@ import com.playdata.userservice.common.dto.CommonResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
-import com.playdata.userservice.user.dto.request.UserUpdatePasswordReqDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
+import com.playdata.userservice.user.dto.response.UserInfoResDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
@@ -163,6 +163,19 @@ public class UserController {
     public ResponseEntity<?> updatePw(@PathVariable Long id, @RequestBody UserUpdatePw updatePwDto) {
         User user = userService.updatePw(id, updatePwDto);
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료", user.getUserName());
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    /**
+     * 마이페이지
+     * @param id
+     * @return
+     */
+    @GetMapping("/mypage/{id}")
+    public ResponseEntity<?> mypage(@PathVariable Long id) {
+        User user = userService.mypage(id);
+        UserInfoResDto infoResDto = new UserInfoResDto(user);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "마이페이지", infoResDto);
         return ResponseEntity.ok().body(resDto);
     }
 
