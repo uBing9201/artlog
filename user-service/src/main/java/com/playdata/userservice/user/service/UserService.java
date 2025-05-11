@@ -1,6 +1,7 @@
 package com.playdata.userservice.user.service;
 
 import com.playdata.userservice.common.entity.HintKeyType;
+import com.playdata.userservice.common.entity.YnType;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
@@ -143,5 +144,11 @@ public class UserService {
         );
         user.updatePw(encoder.encode(updatePwDto.getPassword()));
         return user;
+    }
+
+    public User mypage(Long id) {
+        return userRepository.findByIdWithCouponsAndActive(id, YnType.YES).orElseThrow(
+                () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
+        );
     }
 }
