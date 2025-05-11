@@ -2,8 +2,11 @@ package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
+import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
+import com.playdata.userservice.user.dto.request.UserUpdatePasswordReqDto;
+import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
@@ -119,10 +122,48 @@ public class UserController {
      * @param reqDto
      * @return
      */
-    @PostMapping("/verifyHint")
-    public ResponseEntity<?> verifyHint(@RequestBody UserVerifyHintReqDto reqDto) {
+    @PostMapping("/verifyUserIdHint")
+    public ResponseEntity<?> verifyUserIdHint(@RequestBody UserVerifyHintReqDto reqDto) {
         User user = userService.findByHintValue(reqDto);
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "계정찾기 성공", user.getUserId());
         return ResponseEntity.ok().body(resDto);
     }
+
+    /**
+     * 비밀번호찾기 - id, email로 힌트 요청
+     * @param reqDto
+     * @return
+     */
+    @PostMapping("/findByUserIdAndEmail")
+    public ResponseEntity<?> findByUserIdAndEmail(@RequestBody UserFindEmailAndPwReqDto reqDto) {
+        User user = userService.findByHint(reqDto);
+        UserHintKeyResDto hintKeyResDto = new UserHintKeyResDto(user);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 찾기 요청 성공", hintKeyResDto);
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    /**
+     * 비밀번호찾기 - 힌트 답 검증
+     * @param reqDto
+     * @return
+     */
+    @PostMapping("/verifyPasswordHint")
+    public ResponseEntity<?> verifyPasswordHint(@RequestBody UserVerifyHintReqDto reqDto) {
+        User user = userService.findByHintValue(reqDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 찾기 힌트 검증 완료", user.getId());
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    /**
+     * 비밀번호찾기 - 비밀번호 변경 완료
+     * @param id
+     * @return
+     */
+    @PostMapping("/updatePw/{id}")
+    public ResponseEntity<?> updatePw(@PathVariable Long id, @RequestBody UserUpdatePw updatePwDto) {
+        User user = userService.updatePw(id, updatePwDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료", user.getUserName());
+        return ResponseEntity.ok().body(resDto);
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.playdata.userservice.user.service;
 
 import com.playdata.userservice.common.entity.HintKeyType;
+import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePasswordReqDto;
+import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.entity.User;
@@ -115,6 +117,31 @@ public class UserService {
         if (!reqDto.getHintValue().equals(user.getHintValue())) {
             throw new IllegalArgumentException("힌트 답변 내용이 일치하지 않습니다.");
         }
+        return user;
+    }
+
+    /**
+     * 비밀번호찾기 - id, email로 힌트 요청
+     * @param reqDto
+     * @return
+     */
+    public User findByHint(UserFindEmailAndPwReqDto reqDto) {
+        return userRepository.findByUserIdAndEmail(reqDto.getUserId(), reqDto.getEmail()).orElseThrow(
+                () -> new EntityNotFoundException("가입된 회원이 존재하지 않습니다.")
+        );
+    }
+
+    /**
+     * 비밀번호찾기 - 비밀번호 변경 완료
+     * @param id
+     * @return
+     */
+    @Transactional
+    public User updatePw(Long id, UserUpdatePw updatePwDto) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
+        );
+        user.updatePw(encoder.encode(updatePwDto.getPassword()));
         return user;
     }
 }

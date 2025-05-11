@@ -100,7 +100,7 @@ public class User extends BaseTimeEntity {
      * 비밀번호 변경
      * @param password
      */
-    public void updatePassword(String password) {
+    public void updatePw(String password) {
         this.password = password;
     }
 
