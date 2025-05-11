@@ -35,4 +35,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     Optional<User> findByEmailAndHintKey(String email, HintKeyType hintKey);
+
+    /**
+     * 비밀번호 찾기 - id,email 이 일치하는 항목 검색
+     * @param userId
+     * @param email
+     * @return
+     */
+    Optional<User> findByUserIdAndEmail(String userId, String email);
 }
