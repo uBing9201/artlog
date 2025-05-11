@@ -5,6 +5,8 @@ import com.playdata.userservice.common.dto.CommonResDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
+import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
+import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
@@ -96,6 +98,31 @@ public class UserController {
         User user = userService.delete(id);
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "회원탈퇴 완료", user.getId());
 
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    /**
+     * 계정찾기 - 이메일로 힌트 요청
+     * @param email
+     * @return
+     */
+    @PostMapping("/findByHintKey")
+    public ResponseEntity<?> findByHintKey(@RequestParam String email) {
+        User user = userService.findByHint(email);
+        UserHintKeyResDto hintKeyResDto = new UserHintKeyResDto(user);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "계정찾기 요청 성공", hintKeyResDto);
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    /**
+     * 계정찾기 - 힌트 답 검증
+     * @param reqDto
+     * @return
+     */
+    @PostMapping("/verifyHint")
+    public ResponseEntity<?> verifyHint(@RequestBody UserVerifyHintReqDto reqDto) {
+        User user = userService.findByHintValue(reqDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "계정찾기 성공", user.getUserId());
         return ResponseEntity.ok().body(resDto);
     }
 }

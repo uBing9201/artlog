@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // *** 허용하는 url 작성 ***
-                        .requestMatchers("/user/login", "/user/insert").permitAll()
+                        .requestMatchers("/user/login", "/user/insert", "/user/findByHintKey", "/user/verifyHint", "/user/updatePassword").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

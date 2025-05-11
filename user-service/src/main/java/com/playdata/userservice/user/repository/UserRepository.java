@@ -1,5 +1,6 @@
 package com.playdata.userservice.user.repository;
 
+import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.user.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,4 +28,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByPhone(String phone);
 
+    /**
+     * 유저의 이메일 + 힌트키 받아서 일치하는지 비교
+     * @param email
+     * @param hintKey
+     * @return
+     */
+    Optional<User> findByEmailAndHintKey(String email, HintKeyType hintKey);
 }

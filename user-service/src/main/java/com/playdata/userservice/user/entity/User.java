@@ -23,6 +23,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @ToString
@@ -92,6 +94,14 @@ public class User extends BaseTimeEntity {
      */
     public void deleteUser() {
         this.active = YnType.NO;
+    }
+
+    /**
+     * 비밀번호 변경
+     * @param password
+     */
+    public void updatePassword(String password) {
+        this.password = password;
     }
 
 }
