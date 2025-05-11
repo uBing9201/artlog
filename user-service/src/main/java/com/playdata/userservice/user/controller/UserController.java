@@ -124,7 +124,7 @@ public class UserController {
     public ResponseEntity<?> verifyHint(@RequestBody UserVerifyHintReqDto reqDto) {
         User user = userService.findByHintValue(reqDto);
         redisTemplate.opsForValue().set("user:verifyHint:" + user.getUserId(), "true", 5, TimeUnit.MINUTES);
-        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "5분 안에 새로운 비밀번호를 입력해주세요.", user.getEmail());
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "5분 안에 새로운 비밀번호를 입력해주세요.", user.getUserId());
         return ResponseEntity.ok().body(resDto);
     }
 
