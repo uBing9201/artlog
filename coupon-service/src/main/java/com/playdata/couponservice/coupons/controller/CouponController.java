@@ -6,6 +6,7 @@ import com.playdata.couponservice.common.exception.InvalidCouponRegisterExceptio
 import com.playdata.couponservice.coupons.dto.request.CouponReqDto;
 import com.playdata.couponservice.coupons.dto.response.*;
 import com.playdata.couponservice.coupons.service.CouponService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,5 +78,17 @@ public class CouponController {
     public ResponseEntity<?> findByUserKey(@PathVariable Long userKey) {
         List<UserCouponInfoResDto> resDtoList = couponService.findByUserKey(userKey);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당하는 유저의 보유 쿠폰 정보를 조회하였습니다.", resDtoList));
+    }
+
+    /**
+     * 쿠폰 ID 조회
+     * @param serialNumber serialNumber
+     * @return id
+     * @throws EntityNotFoundException 해당하는 쿠폰이 존재하지 않음
+     */
+    @GetMapping("/findBySerial/{serialNumber}")
+    public ResponseEntity<Long> findBySerial(@PathVariable String serialNumber) throws EntityNotFoundException {
+        Long id = couponService.findBySerial(serialNumber);
+        return ResponseEntity.ok().body(id);
     }
 }

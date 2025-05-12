@@ -206,4 +206,11 @@ public class CouponService {
 
         return resDto;
     }
+
+    public Long findBySerial(String serialNumber) throws EntityNotFoundException {
+        List<Coupon> coupon = couponRepository.getCouponBySerialNumber(serialNumber);
+        if(coupon.isEmpty()) throw new EntityNotFoundException("Coupon Not Found");
+
+        return coupon.get(0).getId();
+    }
 }
