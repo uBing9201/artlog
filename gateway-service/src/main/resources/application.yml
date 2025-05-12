@@ -31,6 +31,7 @@ spring:
             baseMessage: hello gateway!
             preLogger: false
             postLogger: true
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
       routes:
         - id: user-service
           uri: lb://USER-SERVICE
