@@ -146,8 +146,13 @@ public class UserService {
         return user;
     }
 
+    /**
+     * 마이페이지
+     * @param id
+     * @return
+     */
     public User mypage(Long id) {
-        return userRepository.findByIdWithCouponsAndActive(id, YnType.YES).orElseThrow(
+        return userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
         );
     }
