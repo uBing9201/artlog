@@ -25,9 +25,10 @@ public class CouponService {
     private final CouponRepository couponRepository;
 
     /**
-     * @param dto CouponReqDto - 쿠폰 등록에 필요한 정보
-     * @return CouponSaveResDto - id, couponTitle
-     * @throws InvalidCouponRegisterException 유효기간, 사용가능 기간, 수량 검증
+     * 쿠폰 등록
+     * @param dto serialNumber, expireDate, period, count, couponTitle
+     * @return id, couponTitle
+     * @throws InvalidCouponRegisterException 쿠폰 등록 실패
      */
     public CouponSaveResDto insert(CouponReqDto dto) throws InvalidCouponRegisterException {
         // 쿠폰의 유효기간이 있다면 현재 만료되지는 않았는지 확인
@@ -70,8 +71,9 @@ public class CouponService {
 
 
     /**
-     * @param id coupon 객체를 찾을 id 값
-     * @return id와 validate로 유효성에 대한 true, false 값 반환
+     * 쿠폰 유효성 검증 (쿠폰 서비스 내부 사용)
+     * @param id id
+     * @return id, valid
      */
     @Transactional
     public CouponValidateDto isValid(Long id) {
@@ -101,7 +103,8 @@ public class CouponService {
     }
 
     /**
-     * @return active가 true인 coupon만 CouponResDto List로 반환
+     * 쿠폰 전체 조회
+     * @return id, serialNumber, expireDate, period, count, couponTitle, registDate, updateDate
      */
     @Transactional
     public List<CouponResDto> findByAll() {
@@ -125,10 +128,10 @@ public class CouponService {
     }
 
     /**
-     *
-     * @param id coupon 객체를 찾을 id 값
-     * @return coupon의 개수, id, 이름을 반환
-     * @throws InvalidCouponAccessException 쿠폰 개수 항목이 없거나, 유효하지 않다면 예외 처리
+     * 쿠폰 남은 수량 확인
+     * @param id id
+     * @return id, couponTitle, count
+     * @throws InvalidCouponAccessException 쿠폰에 대한 잘못된 접근
      */
     @Transactional
     public CouponCountResDto findCountById(Long id) throws InvalidCouponAccessException {

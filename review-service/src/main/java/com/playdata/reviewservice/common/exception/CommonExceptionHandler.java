@@ -22,6 +22,14 @@ public class CommonExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(FeignServiceException.class)
+    public ResponseEntity<?> FeignServiceErrorHandler(InvalidAccessReviewException e) {
+        e.printStackTrace();
+        CommonErrorDto errorDto
+                = new CommonErrorDto(HttpStatus.EXPECTATION_FAILED, e.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.EXPECTATION_FAILED);
+    }
+
     // 옳지 않은 입력값 전달 시 호출되는 메서드
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> illegalHandler(IllegalArgumentException e) {

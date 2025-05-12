@@ -1,24 +1,37 @@
 package com.playdata.orderservice.order.service;
 
 import com.playdata.orderservice.common.exception.InvalidAccessOrderException;
+import com.playdata.orderservice.order.dto.request.ReviewIdentifyReqDto;
 import com.playdata.orderservice.order.dto.response.OrderCancelResDto;
 import com.playdata.orderservice.order.dto.request.OrderSaveReqDto;
 import com.playdata.orderservice.order.dto.response.OrderSaveResDto;
+import com.playdata.orderservice.order.dto.response.ReviewIdentifyResDto;
 import com.playdata.orderservice.order.entity.Orders;
 import com.playdata.orderservice.order.entity.YnType;
 import com.playdata.orderservice.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
 
+    /**
+     * 주문 등록
+     * @param dto userKey, contentId, userCouponKey, totalPrice
+     * @return id, userKey, contentId, totalPrice
+     */
     @Transactional
     public OrderSaveResDto insert(OrderSaveReqDto dto) {
-        // TODO: User에 Feign 넣어서 coupon 상태 변경
+        // TODO: Feign 요청을 통해 order 무결성 검사
+        // 1. 선택한 쿠폰이 유효한지 검사 후 사용한 쿠폰 상태 및 수량 변경
+        // 2. 콘텐츠가 예매 가능한 상태인지..는 프론트에서 해주시겠지..?
 
         Orders order = Orders.builder()
                 .userKey(dto.getUserKey())
@@ -38,6 +51,12 @@ public class OrderService {
                 .build();
     }
 
+    /**
+     * 주문 취소
+     * @param id id
+     * @return id
+     * @throws InvalidAccessOrderException 해당 주문이 없거나 이미 취소됨
+     */
     @Transactional
     public OrderCancelResDto cancel(Long id) throws InvalidAccessOrderException {
         Orders order = orderRepository.findById(id).orElseThrow(
@@ -55,6 +74,28 @@ public class OrderService {
 
         return OrderCancelResDto.builder()
                 .id(id)
+                .build();
+    }
+
+    /**
+     * 특정 유저와 콘텐츠에 대해 주문 상태 확인
+     * Review-Service 에서 넘어옴
+     * @param reqDto userKey, contentId
+     * @return isValid
+     */
+    public ReviewIdentifyResDto isOrdered(ReviewIdentifyReqDto reqDto) {
+        Optional<Orders> order = orderRepository.findByUserKeyAndContentId(reqDto.getUserKey(), reqDto.getContentId());
+        boolean isOrdered = order.isPresent();
+
+        // 취소된 주문인지 확인
+        if(isOrdered && order.get().getActive() == YnType.N) {
+            isOrdered = false;
+        }
+
+        log.error("isOrdered: " + isOrdered);
+
+        return ReviewIdentifyResDto.builder()
+                .isValid(isOrdered)
                 .build();
     }
 }

@@ -25,11 +25,11 @@ public class CouponController {
     private final CouponService couponService;
 
     /**
-     * @param dto CouponReqDto
-     * @return 등록 완료되면 CouponSaveResDto 반환
-     * @throws InvalidCouponRegisterException 등록 실패
+     * 쿠폰 등록
+     * @param dto serialNumber, expireDate, period, count, couponTitle
+     * @return id, couponTitle
+     * @throws InvalidCouponRegisterException 쿠폰 등록 실패
      */
-
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@RequestBody CouponReqDto dto) throws InvalidCouponRegisterException {
         CouponSaveResDto resDto = couponService.insert(dto);
@@ -37,8 +37,9 @@ public class CouponController {
     }
 
     /**
-     * @param id 찾을 쿠폰의 id
-     * @return CouponValidateDto 유효한지에 대한 정보 반환
+     * 쿠폰 유효성 검증 (쿠폰 서비스 내부 사용)
+     * @param id id
+     * @return id, valid
      */
     @GetMapping("/isValid/{id}")
     public ResponseEntity<?> isValid(@PathVariable Long id) {
@@ -47,7 +48,8 @@ public class CouponController {
     }
 
     /**
-     * @return 유효한 모든 쿠폰 조회 결과 반환
+     * 쿠폰 전체 조회
+     * @return id, serialNumber, expireDate, period, count, couponTitle, registDate, updateDate
      */
     @GetMapping("/findByAll")
     public ResponseEntity<?> findByAll() {
@@ -57,14 +59,14 @@ public class CouponController {
     }
 
     /**
-     * @param id 찾을 쿠폰의 id
-     * @return CouponCountResDto 쿠폰의 이름과 수량 정보 반환
-     * @throws InvalidCouponAccessException 잘못된 쿠폰에 대한 접근
+     * 쿠폰 남은 수량 확인
+     * @param id id
+     * @return id, couponTitle, count
+     * @throws InvalidCouponAccessException 쿠폰에 대한 잘못된 접근
      */
     @GetMapping("/findCountById/{id}")
     public ResponseEntity<?> findCountById(@PathVariable Long id) throws InvalidCouponAccessException {
         CouponCountResDto resDto= couponService.findCountById(id);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, id + "번의 남은 수량은 " + resDto.getCount() + "입니다.", resDto));
     }
-
 }
