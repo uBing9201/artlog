@@ -1,6 +1,5 @@
 package com.playdata.userservice.user.dto.response;
 
-import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.entity.UserCoupon;
 import java.util.List;
@@ -23,7 +22,6 @@ public class UserInfoResDto {
     private String userName;
     private String email;
     private String phone;
-    private List<UserCoupon> userCoupons;
 
     public UserInfoResDto(User user) {
         this.userId = user.getUserId();
@@ -32,7 +30,6 @@ public class UserInfoResDto {
         this.userName = user.getUserName();
         this.email = user.getEmail();
         this.phone = user.getPhone();
-        this.userCoupons = user.getUserCoupons();
     }
 
 }

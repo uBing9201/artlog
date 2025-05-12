@@ -175,7 +175,7 @@ public class UserController {
     public ResponseEntity<?> mypage(@PathVariable Long id) {
         User user = userService.mypage(id);
         UserInfoResDto infoResDto = new UserInfoResDto(user);
-        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "마이페이지", infoResDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "마이페이지 요청 성공", infoResDto);
         return ResponseEntity.ok().body(resDto);
     }
 
