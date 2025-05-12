@@ -2,12 +2,10 @@ package com.playdata.couponservice.coupons.service;
 
 import com.playdata.couponservice.common.exception.InvalidCouponAccessException;
 import com.playdata.couponservice.common.exception.InvalidCouponRegisterException;
-import com.playdata.couponservice.coupons.dto.response.CouponCountResDto;
-import com.playdata.couponservice.coupons.dto.response.CouponResDto;
+import com.playdata.couponservice.coupons.dto.response.*;
 import com.playdata.couponservice.coupons.dto.request.CouponReqDto;
-import com.playdata.couponservice.coupons.dto.response.CouponSaveResDto;
-import com.playdata.couponservice.coupons.dto.response.CouponValidateDto;
 import com.playdata.couponservice.coupons.entity.Coupon;
+import com.playdata.couponservice.coupons.feign.UserFeignClient;
 import com.playdata.couponservice.coupons.repository.CouponRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -16,16 +14,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CouponService {
     private final CouponRepository couponRepository;
+    private final UserFeignClient userFeignClient;
 
     /**
      * 쿠폰 등록
+     *
      * @param dto serialNumber, expireDate, period, count, couponTitle
      * @return id, couponTitle
      * @throws InvalidCouponRegisterException 쿠폰 등록 실패
@@ -72,6 +75,7 @@ public class CouponService {
 
     /**
      * 쿠폰 유효성 검증 (쿠폰 서비스 내부 사용)
+     *
      * @param id id
      * @return id, valid
      */
@@ -104,6 +108,7 @@ public class CouponService {
 
     /**
      * 쿠폰 전체 조회
+     *
      * @return id, serialNumber, expireDate, period, count, couponTitle, registDate, updateDate
      */
     @Transactional
@@ -129,6 +134,7 @@ public class CouponService {
 
     /**
      * 쿠폰 남은 수량 확인
+     *
      * @param id id
      * @return id, couponTitle, count
      * @throws InvalidCouponAccessException 쿠폰에 대한 잘못된 접근
@@ -139,11 +145,11 @@ public class CouponService {
                 () -> new EntityNotFoundException("Coupon Not Found")
         );
 
-        if(coupon.getCount() == null) {
+        if (coupon.getCount() == null) {
             throw new InvalidCouponAccessException("This coupon has no count");
         }
 
-        if(!isValid(coupon.getId()).isValid()) {
+        if (!isValid(coupon.getId()).isValid()) {
             throw new InvalidCouponAccessException("Invalid Coupon Access");
         }
 
@@ -152,5 +158,52 @@ public class CouponService {
                 .count(coupon.getCount())
                 .couponTitle(coupon.getCouponTitle())
                 .build();
+    }
+
+    /**
+     * 사용자 쿠폰 조회
+     * @param userKey userKey
+     * @return id, userKey, userCoupon.registDate, userCouponKey, couponTitle, expiredDate
+     */
+    public List<UserCouponInfoResDto> findByUserKey(Long userKey) throws EntityNotFoundException {
+        List<UserCouponResDto> userCouponList = userFeignClient.findCouponById(userKey).getBody();
+        List<Coupon> coupons = userCouponList.stream()
+                .map(dto -> couponRepository.getCouponById(dto.getCouponKey()).orElseThrow(
+                        () -> new EntityNotFoundException("Coupon Not Found")
+                )).toList();
+
+        List<UserCouponInfoResDto> resDto = new ArrayList<>();
+        for (int i = 0; i < userCouponList.size(); i++) {
+            Coupon coupon = coupons.get(i);
+            UserCouponResDto dto = userCouponList.get(i);
+
+            if ((!coupon.getActive().equals('N')) && // 활성화 상태 확인
+                (coupon.getPeriod() == null || coupon.getPeriod() >= ChronoUnit.DAYS.between(dto.getRegistDate(), LocalDateTime.now())) && // 기간 상태 확인
+                (coupon.getExpireDate() == null || !coupon.getExpireDate().isBefore(LocalDateTime.now()))) { // 만료기간 상태 확인
+
+                // 정상적인 쿠폰이 맞다면
+                LocalDateTime expiredDate = null;
+                if(coupon.getExpireDate() != null) expiredDate = coupon.getExpireDate();
+                if(coupon.getPeriod() != null) {
+                    LocalDateTime periodEndDate = LocalDateTime.now().plusDays(coupon.getPeriod());
+                    if(expiredDate == null || expiredDate.isAfter(periodEndDate)) expiredDate = periodEndDate;
+                }
+
+                // 응답 DTO로 변환하여 전달
+                resDto.add(
+                        UserCouponInfoResDto.builder()
+                                .id(coupon.getId())
+                                .userKey(dto.getUserKey())
+                                .userCouponKey(dto.getId())
+                                .registDate(dto.getRegistDate())
+                                .couponTitle(coupon.getCouponTitle())
+                                .expiredDate(expiredDate)
+                                .build()
+                );
+            }
+
+        }
+
+        return resDto;
     }
 }
