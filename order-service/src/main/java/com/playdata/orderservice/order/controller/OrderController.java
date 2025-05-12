@@ -5,13 +5,18 @@ import com.playdata.orderservice.common.exception.InvalidAccessOrderException;
 import com.playdata.orderservice.order.dto.request.OrderSaveReqDto;
 import com.playdata.orderservice.order.dto.request.ReviewIdentifyReqDto;
 import com.playdata.orderservice.order.dto.response.OrderCancelResDto;
+import com.playdata.orderservice.order.dto.response.OrderInfoResDto;
 import com.playdata.orderservice.order.dto.response.OrderSaveResDto;
 import com.playdata.orderservice.order.dto.response.ReviewIdentifyResDto;
 import com.playdata.orderservice.order.service.OrderService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/order")
@@ -25,7 +30,7 @@ public class OrderController {
      * @return id, userKey, contentId, totalPrice
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody OrderSaveReqDto dto) {
+    public ResponseEntity<?> insert(@RequestBody @Valid OrderSaveReqDto dto) {
         OrderSaveResDto resDto = orderService.insert(dto);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.CREATED, "주문이 완료되었습니다.", resDto));
     }
@@ -53,4 +58,17 @@ public class OrderController {
         ReviewIdentifyResDto resDto = orderService.isOrdered(reqDto);
         return ResponseEntity.ok().body(resDto);
     }
+
+    /**
+     * 콘텐츠 예매 조회
+     * @param userKey userKey
+     * @return id, userKey, contentId, totalPrice, active, registDate
+     * @throws EntityNotFoundException 해당 사용자의 주문 내역이 존재하지 않음
+     */
+    @GetMapping("/order/findByAll/{userKey}")
+    ResponseEntity<?> findByAll(@PathVariable Long userKey) throws EntityNotFoundException {
+        List<OrderInfoResDto> resDtoList = orderService.findByAll(userKey);
+        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "사용자의 모든 주문 정보가 조회되었습니다.", resDtoList));
+    }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @Builder @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewUpdateReqDto {
+    // NULL 가능
     private String reviewContent = null;
     private String pirUrl = null;
 }

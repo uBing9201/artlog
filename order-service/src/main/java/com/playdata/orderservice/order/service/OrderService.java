@@ -4,17 +4,21 @@ import com.playdata.orderservice.common.exception.InvalidAccessOrderException;
 import com.playdata.orderservice.order.dto.request.ReviewIdentifyReqDto;
 import com.playdata.orderservice.order.dto.response.OrderCancelResDto;
 import com.playdata.orderservice.order.dto.request.OrderSaveReqDto;
+import com.playdata.orderservice.order.dto.response.OrderInfoResDto;
 import com.playdata.orderservice.order.dto.response.OrderSaveResDto;
 import com.playdata.orderservice.order.dto.response.ReviewIdentifyResDto;
 import com.playdata.orderservice.order.entity.Orders;
 import com.playdata.orderservice.order.entity.YnType;
 import com.playdata.orderservice.order.repository.OrderRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,5 +101,29 @@ public class OrderService {
         return ReviewIdentifyResDto.builder()
                 .isValid(isOrdered)
                 .build();
+    }
+
+    /**
+     * 콘텐츠 예매 조회
+     * @param userKey userKey
+     * @return id, userKey, contentId, totalPrice, active, registDate
+     * @throws EntityNotFoundException 해당 사용자의 주문 내역이 존재하지 않음
+     */
+    public List<OrderInfoResDto> findByAll(Long userKey) throws EntityNotFoundException {
+        List<Orders> orderList = orderRepository.findByUserKey(userKey);
+        if(orderList.isEmpty()) {
+            throw new EntityNotFoundException("No orders found for userKey: " + userKey);
+        }
+
+        return orderList.stream()
+                .map(order -> OrderInfoResDto.builder()
+                        .id(order.getId())
+                        .userKey(order.getUserKey())
+                        .contentId(order.getContentId())
+                        .registDate(order.getRegistDate())
+                        .active(order.getActive() == YnType.Y)
+                        .totalPrice(order.getTotalPrice())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

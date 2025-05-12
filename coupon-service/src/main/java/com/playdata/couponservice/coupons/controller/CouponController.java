@@ -9,6 +9,7 @@ import com.playdata.couponservice.coupons.dto.response.CouponResDto;
 import com.playdata.couponservice.coupons.dto.response.CouponSaveResDto;
 import com.playdata.couponservice.coupons.dto.response.CouponValidateDto;
 import com.playdata.couponservice.coupons.service.CouponService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class CouponController {
      * @throws InvalidCouponRegisterException 쿠폰 등록 실패
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody CouponReqDto dto) throws InvalidCouponRegisterException {
+    public ResponseEntity<?> insert(@RequestBody @Valid CouponReqDto dto) throws InvalidCouponRegisterException {
         CouponSaveResDto resDto = couponService.insert(dto);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "쿠폰이 정상적으로 등록되었습니다.", resDto));
     }
