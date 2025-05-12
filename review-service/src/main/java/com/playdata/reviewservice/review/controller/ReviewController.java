@@ -9,6 +9,7 @@ import com.playdata.reviewservice.review.dto.response.ReviewDefaultResDto;
 import com.playdata.reviewservice.review.dto.response.ReviewResDto;
 import com.playdata.reviewservice.review.service.ReviewService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ReviewController {
      * @throws EntityNotFoundException 유효한 주문 정보가 없음
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody ReviewSaveReqDto dto) throws FeignServiceException, EntityNotFoundException {
+    public ResponseEntity<?> insert(@RequestBody @Valid ReviewSaveReqDto dto) throws FeignServiceException, EntityNotFoundException {
         ReviewDefaultResDto resDto = reviewService.insert(dto);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "리뷰가 등록되었습니다.", resDto));
     }

@@ -10,6 +10,7 @@ import com.playdata.orderservice.order.dto.response.OrderSaveResDto;
 import com.playdata.orderservice.order.dto.response.ReviewIdentifyResDto;
 import com.playdata.orderservice.order.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class OrderController {
      * @return id, userKey, contentId, totalPrice
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody OrderSaveReqDto dto) {
+    public ResponseEntity<?> insert(@RequestBody @Valid OrderSaveReqDto dto) {
         OrderSaveResDto resDto = orderService.insert(dto);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.CREATED, "주문이 완료되었습니다.", resDto));
     }
@@ -53,7 +54,7 @@ public class OrderController {
      * @return isValid
      */
     @PostMapping("/isOrdered")
-    ResponseEntity<ReviewIdentifyResDto> isOrdered(@RequestBody ReviewIdentifyReqDto reqDto) {
+    ResponseEntity<ReviewIdentifyResDto> isOrdered(@RequestBody @Valid ReviewIdentifyReqDto reqDto) {
         ReviewIdentifyResDto resDto = orderService.isOrdered(reqDto);
         return ResponseEntity.ok().body(resDto);
     }
