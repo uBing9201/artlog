@@ -54,7 +54,7 @@ public class OrderController {
      * @return isValid
      */
     @PostMapping("/isOrdered")
-    ResponseEntity<ReviewIdentifyResDto> isOrdered(@RequestBody @Valid ReviewIdentifyReqDto reqDto) {
+    ResponseEntity<ReviewIdentifyResDto> isOrdered(@RequestBody ReviewIdentifyReqDto reqDto) {
         ReviewIdentifyResDto resDto = orderService.isOrdered(reqDto);
         return ResponseEntity.ok().body(resDto);
     }
@@ -66,7 +66,7 @@ public class OrderController {
      * @throws EntityNotFoundException 해당 사용자의 주문 내역이 존재하지 않음
      */
     @GetMapping("/order/findByAll/{userKey}")
-    ResponseEntity<?> findByAll(@PathVariable String userKey) throws EntityNotFoundException {
+    ResponseEntity<?> findByAll(@PathVariable Long userKey) throws EntityNotFoundException {
         List<OrderInfoResDto> resDtoList = orderService.findByAll(userKey);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "사용자의 모든 주문 정보가 조회되었습니다.", resDtoList));
     }

@@ -12,5 +12,5 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
     @Query("SELECT o FROM Orders o WHERE o.userKey = :userKey AND o.contentId = :contentId")
     Optional<Orders> findByUserKeyAndContentId(@Param("userKey") Long userKey, @Param("contentId") Long contentId);
 
-    List<Orders> findByUserKey(String userKey);
+    List<Orders> findByUserKey(Long userKey);
 }

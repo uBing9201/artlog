@@ -109,7 +109,7 @@ public class OrderService {
      * @return id, userKey, contentId, totalPrice, active, registDate
      * @throws EntityNotFoundException 해당 사용자의 주문 내역이 존재하지 않음
      */
-    public List<OrderInfoResDto> findByAll(String userKey) throws EntityNotFoundException {
+    public List<OrderInfoResDto> findByAll(Long userKey) throws EntityNotFoundException {
         List<Orders> orderList = orderRepository.findByUserKey(userKey);
         if(orderList.isEmpty()) {
             throw new EntityNotFoundException("No orders found for userKey: " + userKey);
