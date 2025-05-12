@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -35,6 +36,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Obje
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+
+
 
             if(!request.getHeaders().containsKey("Authorization")) {
                 return onError(exchange, "No Authorization Header");

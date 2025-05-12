@@ -25,5 +25,4 @@ public class CouponReqDto {
 
     @NotBlank(message = "쿠폰 이름은 반드시 입력해야합니다.")
     private String couponTitle;
-
 }

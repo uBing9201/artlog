@@ -33,10 +33,6 @@ public class OrderService {
      */
     @Transactional
     public OrderSaveResDto insert(OrderSaveReqDto dto) {
-        // TODO: Feign 요청을 통해 order 무결성 검사
-        // 1. 선택한 쿠폰이 유효한지 검사 후 사용한 쿠폰 상태 및 수량 변경
-        // 2. 콘텐츠가 예매 가능한 상태인지..는 프론트에서 해주시겠지..?
-
         Orders order = Orders.builder()
                 .userKey(dto.getUserKey())
                 .contentId(dto.getContentId())
@@ -70,9 +66,6 @@ public class OrderService {
         if(order.getActive() == YnType.N){
             throw new InvalidAccessOrderException("Order is already not active");
         }
-
-        // TODO: 1. 사용한 쿠폰 복구해주어야 함 -> 회의를 통해 이야기 해야 함
-        // TODO: 2. 쿠폰 사용했는데 수량이 존재한다면 다시 복구해주어야 함 -> 회의를 통해 이야기 해야 함
 
         order.changActive();
 

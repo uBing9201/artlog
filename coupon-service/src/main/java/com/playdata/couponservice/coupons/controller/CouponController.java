@@ -4,11 +4,9 @@ import com.playdata.couponservice.common.dto.CommonResDto;
 import com.playdata.couponservice.common.exception.InvalidCouponAccessException;
 import com.playdata.couponservice.common.exception.InvalidCouponRegisterException;
 import com.playdata.couponservice.coupons.dto.request.CouponReqDto;
-import com.playdata.couponservice.coupons.dto.response.CouponCountResDto;
-import com.playdata.couponservice.coupons.dto.response.CouponResDto;
-import com.playdata.couponservice.coupons.dto.response.CouponSaveResDto;
-import com.playdata.couponservice.coupons.dto.response.CouponValidateDto;
+import com.playdata.couponservice.coupons.dto.response.*;
 import com.playdata.couponservice.coupons.service.CouponService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,5 +67,28 @@ public class CouponController {
     public ResponseEntity<?> findCountById(@PathVariable Long id) throws InvalidCouponAccessException {
         CouponCountResDto resDto= couponService.findCountById(id);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, id + "번의 남은 수량은 " + resDto.getCount() + "입니다.", resDto));
+    }
+
+    /**
+     * 사용자 쿠폰 조회
+     * @param userKey userKey
+     * @return id, userKey, userCoupon.registDate, userCouponKey, couponTitle, expiredDate
+     */
+    @GetMapping("/findByUserKey/{userKey}")
+    public ResponseEntity<?> findByUserKey(@PathVariable Long userKey) {
+        List<UserCouponInfoResDto> resDtoList = couponService.findByUserKey(userKey);
+        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당하는 유저의 보유 쿠폰 정보를 조회하였습니다.", resDtoList));
+    }
+
+    /**
+     * 쿠폰 ID 조회
+     * @param serialNumber serialNumber
+     * @return id
+     * @throws EntityNotFoundException 해당하는 쿠폰이 존재하지 않음
+     */
+    @GetMapping("/findBySerial/{serialNumber}")
+    public ResponseEntity<Long> findBySerial(@PathVariable String serialNumber) throws EntityNotFoundException {
+        Long id = couponService.findBySerial(serialNumber);
+        return ResponseEntity.ok().body(id);
     }
 }

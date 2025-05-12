@@ -73,4 +73,15 @@ public class ReviewController {
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당 Id에 대한 리뷰가 정상적으로 조회되었습니다.", resDtoList));
     }
 
+    /**
+     * 사용자 별 리뷰 조회
+     * @param userKey userKey
+     * @return userKey, contentId, reviewContent, picUrl, updateDate
+     * @throws EntityNotFoundException 해당 사용자에 대한 리뷰가 존재하지 않음
+     */
+    @GetMapping("/findByUserKey/{userKey}")
+    public ResponseEntity<?> findByUserKey(@PathVariable Long userKey) throws EntityNotFoundException {
+        List<ReviewResDto> resDtoList = reviewService.findByUserKey(userKey);
+        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당 사용자에 대한 리뷰가 정상적으로 조회되었습니다.", resDtoList));
+    }
 }

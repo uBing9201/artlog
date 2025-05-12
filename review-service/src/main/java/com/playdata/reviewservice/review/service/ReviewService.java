@@ -144,4 +144,29 @@ public class ReviewService {
                         .build())
                 .toList();
     }
+
+    /**
+     * 사용자 별 리뷰 조회
+     * @param userKey userKey
+     * @return userKey, contentId, reviewContent, picUrl, updateDate
+     * @throws EntityNotFoundException 해당 사용자에 대한 리뷰가 존재하지 않음
+     */
+    public List<ReviewResDto> findByUserKey(Long userKey) {
+        List<Review> reviewList = reviewRepository.findByUserKey(userKey);
+
+        if(reviewList.isEmpty()) {
+            throw new EntityNotFoundException("해당 유저가 작성한 리뷰가 존재하지 않음.");
+        }
+
+        return reviewList.stream()
+                .filter(review -> review.getActive() != YnType.N && review.getDeleted() != YnType.Y)
+                .map(review -> ReviewResDto.builder()
+                        .userKey(review.getUserKey())
+                        .contentId(review.getContentId())
+                        .updateDate(review.getUpdateDate())
+                        .reviewContent(review.getReviewContent())
+                        .picUrl(review.getPirUrl())
+                        .build())
+                .toList();
+    }
 }
