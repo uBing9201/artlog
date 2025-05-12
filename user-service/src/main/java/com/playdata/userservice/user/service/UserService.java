@@ -142,6 +142,11 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
         );
+
+        if (encoder.matches(updatePwDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("기존 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.");
+        }
+
         user.updatePw(encoder.encode(updatePwDto.getPassword()));
         return user;
     }
