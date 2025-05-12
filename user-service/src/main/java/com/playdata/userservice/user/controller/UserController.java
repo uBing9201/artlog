@@ -182,6 +182,11 @@ public class UserController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    /**
+     * 유저쿠폰조회
+     * @param id
+     * @return
+     */
     @GetMapping("/user/findCouponById/{id}")
     public ResponseEntity<?> findCouponById(@PathVariable Long id) {
         List<UserCoupon> userCoupons = userService.findCouponsByUserId(id);

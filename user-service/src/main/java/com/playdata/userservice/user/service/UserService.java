@@ -161,7 +161,12 @@ public class UserService {
         );
     }
 
+    /**
+     * 유저쿠폰조회
+     * @param userId
+     * @return
+     */
     public List<UserCoupon> findCouponsByUserId(Long userId) {
-        return userCouponRepository.findByUserId(userId);
+        return userCouponRepository.findByUserIdAndActive(userId, YnType.YES);
     }
 }
