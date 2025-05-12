@@ -22,6 +22,11 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
 
+    /**
+     * 주문 등록
+     * @param dto userKey, contentId, userCouponKey, totalPrice
+     * @return id, userKey, contentId, totalPrice
+     */
     @Transactional
     public OrderSaveResDto insert(OrderSaveReqDto dto) {
         // TODO: Feign 요청을 통해 order 무결성 검사
@@ -46,6 +51,12 @@ public class OrderService {
                 .build();
     }
 
+    /**
+     * 주문 취소
+     * @param id id
+     * @return id
+     * @throws InvalidAccessOrderException 해당 주문이 없거나 이미 취소됨
+     */
     @Transactional
     public OrderCancelResDto cancel(Long id) throws InvalidAccessOrderException {
         Orders order = orderRepository.findById(id).orElseThrow(
@@ -66,6 +77,12 @@ public class OrderService {
                 .build();
     }
 
+    /**
+     * 특정 유저와 콘텐츠에 대해 주문 상태 확인
+     * Review-Service 에서 넘어옴
+     * @param reqDto userKey, contentId
+     * @return isValid
+     */
     public ReviewIdentifyResDto isOrdered(ReviewIdentifyReqDto reqDto) {
         Optional<Orders> order = orderRepository.findByUserKeyAndContentId(reqDto.getUserKey(), reqDto.getContentId());
         boolean isOrdered = order.isPresent();
