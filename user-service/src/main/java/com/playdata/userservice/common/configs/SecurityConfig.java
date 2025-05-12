@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/login", "/user/insert",
                                 "/user/findByHintKey", "/user/verifyUserIdHint",
                                 "/user/findByUserIdAndEmail", "/user/verifyPasswordHint",
-                                "/user/updatePw/{id}").permitAll()
+                                "/user/updatePw/{id}", "/user/findCouponById/{id}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

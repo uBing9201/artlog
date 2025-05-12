@@ -187,7 +187,7 @@ public class UserController {
      * @param id
      * @return
      */
-    @GetMapping("/user/findCouponById/{id}")
+    @GetMapping("/findCouponById/{id}")
     public ResponseEntity<?> findCouponById(@PathVariable Long id) {
         List<UserCoupon> userCoupons = userService.findCouponsByUserId(id);
 
@@ -196,7 +196,7 @@ public class UserController {
                 .toList();
 
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "유저쿠폰조회 요청 성공", couponResDto);
-        return ResponseEntity.ok().body(resDto);
+        return ResponseEntity.ok().body(couponResDto);
     }
 
 }
