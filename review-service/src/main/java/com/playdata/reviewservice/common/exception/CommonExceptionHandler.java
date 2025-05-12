@@ -26,8 +26,8 @@ public class CommonExceptionHandler {
     public ResponseEntity<?> FeignServiceErrorHandler(InvalidAccessReviewException e) {
         e.printStackTrace();
         CommonErrorDto errorDto
-                = new CommonErrorDto(HttpStatus.EXPECTATION_FAILED, e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.EXPECTATION_FAILED);
+                = new CommonErrorDto(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     // 옳지 않은 입력값 전달 시 호출되는 메서드
