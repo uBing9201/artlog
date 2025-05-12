@@ -10,8 +10,11 @@ import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.entity.User;
+import com.playdata.userservice.user.entity.UserCoupon;
+import com.playdata.userservice.user.repository.UserCouponRepository;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserCouponRepository userCouponRepository;
     private final PasswordEncoder encoder;
 
     /**
@@ -155,5 +159,9 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
         );
+    }
+
+    public List<UserCoupon> findCouponsByUserId(Long userId) {
+        return userCouponRepository.findByUserId(userId);
     }
 }

@@ -2,6 +2,7 @@ package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
+import com.playdata.userservice.user.dto.request.UserCouponResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
@@ -11,9 +12,11 @@ import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
 import com.playdata.userservice.user.dto.response.UserInfoResDto;
 import com.playdata.userservice.user.entity.User;
+import com.playdata.userservice.user.entity.UserCoupon;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -176,6 +179,18 @@ public class UserController {
         User user = userService.mypage(id);
         UserInfoResDto infoResDto = new UserInfoResDto(user);
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "마이페이지 요청 성공", infoResDto);
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    @GetMapping("/user/findCouponById/{id}")
+    public ResponseEntity<?> findCouponById(@PathVariable Long id) {
+        List<UserCoupon> userCoupons = userService.findCouponsByUserId(id);
+
+        List<UserCouponResDto> couponResDto = userCoupons.stream()
+                .map(UserCouponResDto::new)
+                .toList();
+
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "유저쿠폰조회 요청 성공", couponResDto);
         return ResponseEntity.ok().body(resDto);
     }
 
