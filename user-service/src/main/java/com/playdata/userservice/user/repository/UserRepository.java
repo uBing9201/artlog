@@ -45,4 +45,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     Optional<User> findByUserIdAndEmail(String userId, String email);
+
 }
