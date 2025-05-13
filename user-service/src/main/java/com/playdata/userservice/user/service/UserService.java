@@ -1,5 +1,6 @@
 package com.playdata.userservice.user.service;
 
+import com.playdata.userservice.common.dto.LoginResultDto;
 import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.common.entity.YnType;
 import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
@@ -52,17 +53,20 @@ public class UserService {
      * @param loginDto 로그인 DTO
      * @return 회원 로그인
      */
-    public User login(UserLoginDto loginDto) {
+    public LoginResultDto login(UserLoginDto loginDto) {
+        Optional<User> optionalUser = userRepository.findByUserId(loginDto.getUserId());
 
-        User user = userRepository.findByUserId(loginDto.getUserId()).orElseThrow(
-                () -> new EntityNotFoundException("ID가 존재하지 않습니다.")
-        );
-
-        if (!encoder.matches(loginDto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        if (!optionalUser.isPresent()) {
+            return new LoginResultDto(false, "아이디 또는 비밀번호를 확인해주세요.", null);
         }
 
-        return user;
+        User user = optionalUser.get();
+
+        if (!encoder.matches(loginDto.getPassword(), user.getPassword())) {
+            return new LoginResultDto(false, "아이디 또는 비밀번호를 확인해주세요.", null);
+        }
+
+        return new LoginResultDto(true, "로그인 성공", user);
     }
 
     /**

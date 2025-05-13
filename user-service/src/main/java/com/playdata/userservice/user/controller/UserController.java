@@ -2,6 +2,7 @@ package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
+import com.playdata.userservice.common.dto.LoginResultDto;
 import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserCouponResDto;
@@ -67,8 +68,14 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDto loginDto) {
+        LoginResultDto result = userService.login(loginDto);
 
-        User user = userService.login(loginDto);
+        if (!result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new CommonResDto(HttpStatus.UNAUTHORIZED, result.getMessage(), null));
+        }
+
+        User user = result.getUser();
         String token = jwtProvider.createToken(String.valueOf(user.getId()), user.getRole().toString());
         String refreshToken = jwtProvider.createRefreshToken(
                 String.valueOf(user.getId()), user.getRole().toString());
@@ -80,8 +87,7 @@ public class UserController {
         loginInfo.put("id", user.getId());
         loginInfo.put("role", user.getRole().toString());
 
-        CommonResDto resDto = new CommonResDto(HttpStatus.OK,
-                "로그인 성공", loginInfo);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "로그인 성공", loginInfo);
         return ResponseEntity.ok(resDto);
     }
 
