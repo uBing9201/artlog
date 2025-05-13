@@ -174,32 +174,6 @@ public class UserService {
     public List<UserCoupon> findCouponsByUserId(Long userId) {
         return userCouponRepository.findByUserIdAndActive(userId, YnType.YES);
     }
-//    public List<UserCouponInfoResDto> findCouponsByUserId(Long userId) {
-//        List<UserCoupon> userCoupons = userCouponRepository.findByUserIdAndActive(userId, YnType.YES);
-//
-//        // userKey만 추출 (중복 제거를 위해 Set 사용)
-//        Set<Long> userKeys = userCoupons.stream()
-//                .map(coupon -> coupon.getUser().getId())
-//                .collect(Collectors.toSet());
-//
-//        // userKey마다 feign 호출 → flatten 후 전체 리스트로 수집
-//        // 각 userKey별로 Feign Client 호출 후 병합
-//        List<UserCouponInfoResDto> result = userKeys.stream()
-//                .flatMap(userKey -> {
-//                    ResponseEntity<?> response = couponFeignClient.findByUserKey(userKey);
-//                    if (response.getBody() instanceof CommonResDto commonResDto &&
-//                            commonResDto.getResult() instanceof List<?> list) {
-//                        return list.stream()
-//                                .filter(UserCouponInfoResDto.class::isInstance)
-//                                .map(UserCouponInfoResDto.class::cast);
-//                    } else {
-//                        return Stream.empty();
-//                    }
-//                })
-//                .collect(Collectors.toList());
-//
-//        return result;
-//    }
 
     /**
      * 유저 쿠폰 등록

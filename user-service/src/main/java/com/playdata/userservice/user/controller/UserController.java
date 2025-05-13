@@ -197,7 +197,6 @@ public class UserController {
                 .map(UserCouponResDto::new)
                 .toList();
 
-        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "유저쿠폰조회 요청 성공", couponResDto);
         return ResponseEntity.ok().body(couponResDto);
     }
 
