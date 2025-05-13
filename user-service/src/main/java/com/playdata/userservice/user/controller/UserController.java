@@ -228,4 +228,20 @@ public class UserController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    /**
+     * 아이디 중복 체크
+     * @param userId
+     * @return
+     */
+    @GetMapping("/checkId/{userId}")
+    public ResponseEntity<CommonResDto> validCheckId(@PathVariable String userId) {
+        boolean available = userService.validCheckId(userId);
+        CommonResDto resDto = new CommonResDto(
+                HttpStatus.OK,
+                "사용 가능한 아이디입니다.",
+                available
+        );
+        return ResponseEntity.ok(resDto);
+    }
+
 }

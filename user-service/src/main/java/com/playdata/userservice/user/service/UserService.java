@@ -3,14 +3,12 @@ package com.playdata.userservice.user.service;
 import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.common.entity.YnType;
 import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
-import com.playdata.userservice.user.dto.request.UserCouponResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
-import com.playdata.userservice.user.dto.response.UserCouponInfoResDto;
 import com.playdata.userservice.user.dto.response.UserCouponInsertResDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.entity.UserCoupon;
@@ -188,4 +186,14 @@ public class UserService {
         return UserCouponInsertResDto.fromEntity(saved);
     }
 
+    /**
+     * 아이디 중복 체크
+     * @param userId
+     * @return
+     */
+    public boolean validCheckId(String userId) {
+        // 중복일 경우 예외를 던지고, 아니면 그대로 true 리턴
+        validateDuplicate("ID", userRepository.findByUserId(userId));
+        return true;
+    }
 }
