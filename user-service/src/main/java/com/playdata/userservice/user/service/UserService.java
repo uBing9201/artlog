@@ -193,7 +193,6 @@ public class UserService {
      */
     public boolean validCheckId(String userId) {
         // 중복일 경우 예외를 던지고, 아니면 그대로 true 리턴
-        validateDuplicate("ID", userRepository.findByUserId(userId));
-        return true;
+        return userRepository.existsByUserId(userId);
     }
 }

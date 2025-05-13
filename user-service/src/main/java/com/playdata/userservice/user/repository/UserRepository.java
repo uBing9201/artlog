@@ -46,4 +46,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByUserIdAndEmail(String userId, String email);
 
+    /**
+     * 아이디 중복체크
+     * @param userId
+     * @return
+     */
+    boolean existsByUserId(String userId);
+
 }

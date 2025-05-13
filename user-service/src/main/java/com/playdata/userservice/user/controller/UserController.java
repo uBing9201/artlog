@@ -236,9 +236,10 @@ public class UserController {
     @GetMapping("/checkId/{userId}")
     public ResponseEntity<CommonResDto> validCheckId(@PathVariable String userId) {
         boolean available = userService.validCheckId(userId);
+        String message = !available ? "사용 가능한 아이디입니다." : "이미 존재하는 아이디입니다.";
         CommonResDto resDto = new CommonResDto(
                 HttpStatus.OK,
-                "사용 가능한 아이디입니다.",
+                message,
                 available
         );
         return ResponseEntity.ok(resDto);
