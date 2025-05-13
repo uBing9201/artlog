@@ -82,6 +82,19 @@ spring:
                 postLogger: true
             - RewritePath=/order-service/(?<segment>.*), /$\{segment}
             - name: AuthorizationHeaderFilter
+
+        - id: api-service
+          uri: lb://API-SERVICE
+          predicates:
+            - Path=/api-service/api/**
+          filters:
+            - name: GlobalFilter
+              args:
+                baseMessage: pass
+                preLogger: true
+                postLogger: true
+            - RewritePath=/api-service/(?<segment>.*), /$\{segment}
+
 #        - id: user-service
 #          uri: lb://USER-SERVICE
 #          predicates:
