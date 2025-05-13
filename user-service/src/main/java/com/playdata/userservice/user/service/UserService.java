@@ -2,15 +2,19 @@ package com.playdata.userservice.user.service;
 
 import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.common.entity.YnType;
+import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
+import com.playdata.userservice.user.dto.request.UserCouponResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;
-import com.playdata.userservice.user.dto.request.UserUpdatePasswordReqDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
+import com.playdata.userservice.user.dto.response.UserCouponInfoResDto;
+import com.playdata.userservice.user.dto.response.UserCouponInsertResDto;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.entity.UserCoupon;
+import com.playdata.userservice.user.feign.CouponFeignClient;
 import com.playdata.userservice.user.repository.UserCouponRepository;
 import com.playdata.userservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserCouponRepository userCouponRepository;
     private final PasswordEncoder encoder;
+    private final CouponFeignClient couponFeignClient;
 
     /**
      * 유저 생성
@@ -169,4 +174,44 @@ public class UserService {
     public List<UserCoupon> findCouponsByUserId(Long userId) {
         return userCouponRepository.findByUserIdAndActive(userId, YnType.YES);
     }
+//    public List<UserCouponInfoResDto> findCouponsByUserId(Long userId) {
+//        List<UserCoupon> userCoupons = userCouponRepository.findByUserIdAndActive(userId, YnType.YES);
+//
+//        // userKey만 추출 (중복 제거를 위해 Set 사용)
+//        Set<Long> userKeys = userCoupons.stream()
+//                .map(coupon -> coupon.getUser().getId())
+//                .collect(Collectors.toSet());
+//
+//        // userKey마다 feign 호출 → flatten 후 전체 리스트로 수집
+//        // 각 userKey별로 Feign Client 호출 후 병합
+//        List<UserCouponInfoResDto> result = userKeys.stream()
+//                .flatMap(userKey -> {
+//                    ResponseEntity<?> response = couponFeignClient.findByUserKey(userKey);
+//                    if (response.getBody() instanceof CommonResDto commonResDto &&
+//                            commonResDto.getResult() instanceof List<?> list) {
+//                        return list.stream()
+//                                .filter(UserCouponInfoResDto.class::isInstance)
+//                                .map(UserCouponInfoResDto.class::cast);
+//                    } else {
+//                        return Stream.empty();
+//                    }
+//                })
+//                .collect(Collectors.toList());
+//
+//        return result;
+//    }
+
+    /**
+     * 유저 쿠폰 등록
+     *
+     * @param couponInsertReqDto
+     * @return
+     */
+    public UserCouponInsertResDto userCouponSave(UserCouponInsertReqDto couponInsertReqDto) {
+        Long couponKey = couponFeignClient.findBySerial(couponInsertReqDto.getSerialNumber()).getBody();
+        UserCoupon userCoupon = couponInsertReqDto.toEntity(couponKey);
+        UserCoupon saved = userCouponRepository.save(userCoupon);
+        return UserCouponInsertResDto.fromEntity(saved);
+    }
+
 }

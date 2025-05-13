@@ -75,6 +75,10 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCoupon> userCoupons;
 
+    public User(Long id) {
+        this.id = id;
+    }
+
     /**
      * 회원정보 수정
      * @param hintKey

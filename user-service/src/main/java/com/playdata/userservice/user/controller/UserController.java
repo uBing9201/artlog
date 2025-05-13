@@ -2,6 +2,7 @@ package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
+import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserCouponResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
@@ -9,6 +10,7 @@ import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
+import com.playdata.userservice.user.dto.response.UserCouponInsertResDto;
 import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
 import com.playdata.userservice.user.dto.response.UserInfoResDto;
 import com.playdata.userservice.user.entity.User;
@@ -197,6 +199,18 @@ public class UserController {
 
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "유저쿠폰조회 요청 성공", couponResDto);
         return ResponseEntity.ok().body(couponResDto);
+    }
+
+    /**
+     * 유저 쿠폰 등록
+     * @param couponInsertReqDto
+     * @return
+     */
+    @PostMapping("/couponInsert")
+    public ResponseEntity<?> couponInsert(@RequestBody UserCouponInsertReqDto couponInsertReqDto) {
+        UserCouponInsertResDto saved = userService.userCouponSave(couponInsertReqDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "쿠폰등록 완료", saved);
+        return ResponseEntity.ok().body(resDto);
     }
 
 }
