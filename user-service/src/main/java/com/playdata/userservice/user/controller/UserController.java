@@ -2,6 +2,7 @@ package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
+import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserCouponResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
@@ -10,6 +11,7 @@ import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
+import com.playdata.userservice.user.dto.response.HintKeyResDto;
 import com.playdata.userservice.user.dto.response.UserCouponInsertResDto;
 import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
 import com.playdata.userservice.user.dto.response.UserInfoResDto;
@@ -17,6 +19,7 @@ import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.entity.UserCoupon;
 import com.playdata.userservice.user.service.UserService;
 import jakarta.validation.Valid;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,6 +212,19 @@ public class UserController {
     public ResponseEntity<?> couponInsert(@RequestBody UserCouponInsertReqDto couponInsertReqDto) {
         UserCouponInsertResDto saved = userService.userCouponSave(couponInsertReqDto);
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "쿠폰등록 완료", saved);
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    /**
+     * 유저 힌트키 조회
+     * @return
+     */
+    @GetMapping("/hintKeys")
+    public ResponseEntity<?> getHintKeyTypes() {
+        List<HintKeyResDto> getHintKeys =  Arrays.stream(HintKeyType.values())
+                .map(hint -> new HintKeyResDto(hint.getCode(), hint.getDesc()))
+                .toList();
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "유저 힌트키 조회 완료", getHintKeys);
         return ResponseEntity.ok().body(resDto);
     }
 
