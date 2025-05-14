@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +38,6 @@ public class UserController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 유저 생성

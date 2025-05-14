@@ -18,12 +18,6 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    @Value("${jwt.secretKeyRt}")
-    private String secretKeyRt;
-
-    @Value("${jwt.expirationRt}")
-    private int expirationRt;
-
     /**
      * jwt 토큰 발행
      * @param id 토큰에 심을 유저 정보
@@ -39,24 +33,6 @@ public class JwtProvider {
                 .setExpiration(expirationDate)
                 .claim("role", role)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
-    }
-
-    /**
-     * jwt 토큰 재발행
-     * @param id 토큰에 심을 유저 정보
-     * @param role 토큰에 저장할 유저 롤
-     * @return token 재발행
-     */
-    public String createRefreshToken(String id, String role){
-        Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + (expirationRt * 60L * 1000));
-        return Jwts.builder()
-                .setSubject(id)
-                .setIssuedAt(now)
-                .setExpiration(expirationDate)
-                .claim("role", role)
-                .signWith(SignatureAlgorithm.HS512, secretKeyRt) // 서명을 어떤 알고리즘으로 암호화 할 지
                 .compact();
     }
 
@@ -91,14 +67,6 @@ public class JwtProvider {
             log.error("token signature error");
         } catch (Exception e) {
             log.error("token error");
-
-            // 발생 가능한 에러 목록
-//      } catch (IllegalArgumentException e) {
-//            throw new RuntimeException(e);
-//      } catch (UnsupportedJwtException e) {
-//            throw new RuntimeException(e);
-//      } catch (MalformedJwtException e) {
-//            throw new RuntimeException(e);
         }
 
         return claims;
