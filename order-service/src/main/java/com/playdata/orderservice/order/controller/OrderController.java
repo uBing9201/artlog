@@ -1,5 +1,6 @@
 package com.playdata.orderservice.order.controller;
 
+import com.playdata.orderservice.common.auth.TokenUserInfo;
 import com.playdata.orderservice.common.dto.CommonResDto;
 import com.playdata.orderservice.common.exception.InvalidAccessOrderException;
 import com.playdata.orderservice.order.dto.request.OrderSaveReqDto;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class OrderController {
      * @return id, userKey, contentId, totalPrice
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody @Valid OrderSaveReqDto dto) {
-        OrderSaveResDto resDto = orderService.insert(dto);
+    public ResponseEntity<?> insert(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody @Valid OrderSaveReqDto dto) {
+        OrderSaveResDto resDto = orderService.insert(userInfo, dto);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.CREATED, "주문이 완료되었습니다.", resDto));
     }
 
