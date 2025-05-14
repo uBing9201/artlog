@@ -16,6 +16,8 @@ public class ContentResDto {
     private String contentThumbnail;
     private Long contentCharge;
     private Long contentPeriod;
+    private String startDate;
+    private String endDate;
 
     @Override
     public boolean equals(Object o) {

@@ -136,6 +136,7 @@ public class ContentDto {
 
         // 7. period 검증
         long periodL = 0L;
+        String startDateStr, endDateStr;
         if (this.period == null || this.period.isEmpty()) {
             log.error("period가 유효하지 않습니다. : " + this.period);
             return null;
@@ -148,8 +149,8 @@ public class ContentDto {
                     dates = this.period.split("~");
                 }
                 // 1. 시작일과 종료일 분리
-                String startDateStr = dates[0].trim();
-                String endDateStr = dates[dates.length - 1].trim();
+                startDateStr = dates[0].trim();
+                endDateStr = dates[dates.length - 1].trim();
 
                 // 2. 문자열을 LocalDate로 파싱
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -158,6 +159,8 @@ public class ContentDto {
 
                 // 3. 일수 계산 (양 끝 포함하려면 +1)
                 periodL = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+                log.info("startDate:" + startDateStr + " endDate:" + endDateStr);
             } catch (Exception e) {
                 log.error("period 파싱에 실패하였습니다. : " + this.period);
                 return null;
@@ -172,6 +175,8 @@ public class ContentDto {
                 .contentCharge(Long.parseLong(this.charge))
                 .contentThumbnail(this.imageObject)
                 .contentPeriod(periodL)
+                .startDate(startDateStr)
+                .endDate(endDateStr)
                 .build();
     }
 }

@@ -83,7 +83,7 @@ public class ApiService {
             log.error("불러오는데 실패했습니다");
 
             // 예외 던지기
-            throw new PublicApiException("공공 API를 불러오는 데 실패했습니다.");
+            throw new IOException("공공 API를 불러오는 데 실패했습니다.");
         }
 
         // 응답 받기

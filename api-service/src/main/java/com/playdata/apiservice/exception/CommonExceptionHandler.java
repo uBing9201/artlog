@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+
 @RestControllerAdvice
 public class CommonExceptionHandler {
 
@@ -48,7 +50,13 @@ public class CommonExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR); // 500 에러
     }
 
-
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> ioExceptionHandler(IOException e) {
+        e.printStackTrace();
+        CommonErrorDto errorDto
+                = new CommonErrorDto(HttpStatus.BAD_REQUEST, e.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST); // 500 에러
+    }
 
 }
 
