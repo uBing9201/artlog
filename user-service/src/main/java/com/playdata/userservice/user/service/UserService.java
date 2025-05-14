@@ -54,9 +54,9 @@ public class UserService {
      * @return 회원 로그인
      */
     public LoginResultDto login(UserLoginDto loginDto) {
-        Optional<User> optionalUser = userRepository.findByUserId(loginDto.getUserId());
+        Optional<User> optionalUser = userRepository.findByUserIdAndActive(loginDto.getUserId(), YnType.YES);
 
-        if (!optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             return new LoginResultDto(false, "아이디 또는 비밀번호를 확인해주세요.", null);
         }
 

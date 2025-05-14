@@ -53,4 +53,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     boolean existsByUserId(String userId);
 
+    /**
+     * 유저 id, active 로 활성화된 계정만 조회
+     * @param userId
+     * @param ynType
+     * @return
+     */
+    Optional<User> findByUserIdAndActive(String userId, YnType ynType);
 }

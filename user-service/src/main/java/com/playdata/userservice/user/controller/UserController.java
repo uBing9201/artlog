@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -33,7 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user") // user 관련 요청은 /user로 시작한다고 가정.
+@RequestMapping("/user")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
@@ -77,10 +76,6 @@ public class UserController {
 
         User user = result.getUser();
         String token = jwtProvider.createToken(String.valueOf(user.getId()), user.getRole().toString());
-        String refreshToken = jwtProvider.createRefreshToken(
-                String.valueOf(user.getId()), user.getRole().toString());
-
-        redisTemplate.opsForValue().set("user:refresh:" + user.getUserId(), refreshToken, 2, TimeUnit.MINUTES);
 
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("token", token);
