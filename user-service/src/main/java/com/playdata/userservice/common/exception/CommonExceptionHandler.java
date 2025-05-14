@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class CommonExceptionHandler {
@@ -49,6 +50,15 @@ public class CommonExceptionHandler {
         CommonErrorDto errorDto
                 = new CommonErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, "server error");
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR); // 500 에러
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> responseStatusExceptionHandler(ResponseStatusException e) {
+        CommonErrorDto errorDto = new CommonErrorDto(
+                HttpStatus.valueOf(e.getStatusCode().value()), // HttpStatus 변환
+                e.getReason()
+        );
+        return new ResponseEntity<>(errorDto, HttpStatus.valueOf(e.getStatusCode().value()));
     }
 
 }

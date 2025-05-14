@@ -16,14 +16,17 @@ import com.playdata.userservice.user.entity.UserCoupon;
 import com.playdata.userservice.user.feign.CouponFeignClient;
 import com.playdata.userservice.user.repository.UserCouponRepository;
 import com.playdata.userservice.user.repository.UserRepository;
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -184,10 +187,18 @@ public class UserService {
      * @return
      */
     public UserCouponInsertResDto userCouponSave(UserCouponInsertReqDto couponInsertReqDto) {
-        Long couponKey = couponFeignClient.findBySerial(couponInsertReqDto.getSerialNumber()).getBody();
-        UserCoupon userCoupon = couponInsertReqDto.toEntity(couponKey);
-        UserCoupon saved = userCouponRepository.save(userCoupon);
-        return UserCouponInsertResDto.fromEntity(saved);
+        try {
+            Long couponKey = couponFeignClient.findBySerial(couponInsertReqDto.getSerialNumber()).getBody();
+            UserCoupon userCoupon = couponInsertReqDto.toEntity(couponKey);
+            UserCoupon saved = userCouponRepository.save(userCoupon);
+            return UserCouponInsertResDto.fromEntity(saved);
+        } catch (FeignException.NotFound e) {
+            // 쿠폰이 없을 경우 404 응답을 반환
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "쿠폰을 찾을 수 없습니다.");
+        } catch (FeignException e) {
+            // 서버 에러일 경우 500 응답을 반환
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생");
+        }
     }
 
     /**
