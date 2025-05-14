@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -59,6 +60,17 @@ public class CommonExceptionHandler {
                 e.getReason()
         );
         return new ResponseEntity<>(errorDto, HttpStatus.valueOf(e.getStatusCode().value()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        // 첫 번째 에러 메시지만 추출
+        String errorMessage = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+
+        // 공통 에러 DTO 사용
+        CommonErrorDto errorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST, errorMessage);
+
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
 }
