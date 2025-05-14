@@ -44,6 +44,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Obje
             }
 
             String authHeader = request.getHeaders().get("Authorization").get(0);
+            log.error(authHeader);
             if(!authHeader.startsWith("Bearer ")) {
                 return onError(exchange, "No Bearer Token");
             }

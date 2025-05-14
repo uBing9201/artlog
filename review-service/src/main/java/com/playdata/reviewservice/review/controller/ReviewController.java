@@ -1,5 +1,6 @@
 package com.playdata.reviewservice.review.controller;
 
+import com.playdata.reviewservice.common.auth.TokenUserInfo;
 import com.playdata.reviewservice.common.dto.CommonResDto;
 import com.playdata.reviewservice.common.exception.FeignServiceException;
 import com.playdata.reviewservice.common.exception.InvalidAccessReviewException;
@@ -11,8 +12,10 @@ import com.playdata.reviewservice.review.service.ReviewService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,19 +23,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/review")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
     private final ReviewService reviewService;
 
     /**
      * 리뷰 등록
+     * @param userInfo
      * @param dto userKey, contentId, reviewContent, picUrl
      * @return id
      * @throws FeignServiceException feign 처리 중 오류
      * @throws EntityNotFoundException 유효한 주문 정보가 없음
      */
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody @Valid ReviewSaveReqDto dto) throws FeignServiceException, EntityNotFoundException {
-        ReviewDefaultResDto resDto = reviewService.insert(dto);
+    public ResponseEntity<?> insert(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody  ReviewSaveReqDto dto) throws FeignServiceException, EntityNotFoundException {
+        log.error(dto.toString());
+        ReviewDefaultResDto resDto = reviewService.insert(userInfo, dto);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "리뷰가 등록되었습니다.", resDto));
     }
 
@@ -71,6 +77,13 @@ public class ReviewController {
     public ResponseEntity<?> findByContentId(@PathVariable String contentId) throws EntityNotFoundException {
         List<ReviewResDto> resDtoList = reviewService.findByContentId(contentId);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당 Id에 대한 리뷰가 정상적으로 조회되었습니다.", resDtoList));
+    }
+
+    @GetMapping("/findByContentIdFeign/{contentId}")
+    public ResponseEntity<Boolean> findByContentIdFeign(@PathVariable String contentId) throws EntityNotFoundException {
+        List<ReviewResDto> resDtoList = reviewService.findByContentId(contentId);
+        Boolean response = !resDtoList.isEmpty();
+        return ResponseEntity.ok().body(response);
     }
 
     /**

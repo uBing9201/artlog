@@ -9,10 +9,7 @@ import lombok.*;
 @Builder @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewSaveReqDto {
-    @Positive
-    private Long userKey;
 
-    @NotNull
     private String contentId;
 
     // NULL 가능

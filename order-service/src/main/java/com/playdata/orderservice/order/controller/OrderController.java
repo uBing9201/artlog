@@ -65,10 +65,21 @@ public class OrderController {
      * @return id, userKey, contentId, totalPrice, active, registDate
      * @throws EntityNotFoundException 해당 사용자의 주문 내역이 존재하지 않음
      */
-    @GetMapping("/order/findByAll/{userKey}")
+    @GetMapping("/findByAll/{userKey}")
     ResponseEntity<?> findByAll(@PathVariable Long userKey) throws EntityNotFoundException {
         List<OrderInfoResDto> resDtoList = orderService.findByAll(userKey);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "사용자의 모든 주문 정보가 조회되었습니다.", resDtoList));
     }
 
+    /**
+     * 콘텐츠 예매 조회(Feign 전용)
+     * @param userKey userKey
+     * @return id, userKey, contentId, totalPrice, active, registDate
+     * @throws EntityNotFoundException 해당 사용자의 주문 내역이 존재하지 않음
+     */
+    @GetMapping("/findByAllFeign/{userKey}")
+    ResponseEntity<List<OrderInfoResDto>> findByAllFeign(@PathVariable Long userKey) throws EntityNotFoundException {
+        List<OrderInfoResDto> resDtoList = orderService.findByAll(userKey);
+        return ResponseEntity.ok().body(resDtoList);
+    }
 }
