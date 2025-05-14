@@ -124,7 +124,7 @@ public class ReviewService {
      * @return userKey, contentId, reviewContent, picUrl, updateDate
      * @throws EntityNotFoundException 해당 컨텐츠에 리뷰가 존재하지 않음
      */
-    public List<ReviewResDto> findByContentId(Long contentId) throws EntityNotFoundException {
+    public List<ReviewResDto> findByContentId(String contentId) throws EntityNotFoundException {
         // 콘텐츠 ID 값으로 리뷰 조회
         List<Review> reviewList = reviewRepository.findByContentId(contentId);
 

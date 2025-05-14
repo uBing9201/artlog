@@ -68,7 +68,7 @@ public class ReviewController {
      * @throws EntityNotFoundException 해당 컨텐츠에 리뷰가 존재하지 않음
      */
     @GetMapping("/findByContentId/{contentId}")
-    public ResponseEntity<?> findByContentId(@PathVariable Long contentId) throws EntityNotFoundException {
+    public ResponseEntity<?> findByContentId(@PathVariable String contentId) throws EntityNotFoundException {
         List<ReviewResDto> resDtoList = reviewService.findByContentId(contentId);
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당 Id에 대한 리뷰가 정상적으로 조회되었습니다.", resDtoList));
     }
