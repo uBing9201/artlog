@@ -13,4 +13,5 @@ public class UserCouponInfoResDto {
     private Long userCouponKey;
     private String couponTitle;
     private LocalDateTime expiredDate;
+    private String serialNumber;
 }
