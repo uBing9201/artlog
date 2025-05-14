@@ -198,6 +198,7 @@ public class CouponService {
                                 .registDate(dto.getRegistDate())
                                 .couponTitle(coupon.getCouponTitle())
                                 .expiredDate(expiredDate)
+                                .serialNumber(coupon.getSerialNumber())
                                 .build()
                 );
             }
