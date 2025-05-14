@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewResDto {
     private Long userKey;
-    private Long contentId;
+    private String contentId;
     private String reviewContent = null;
     private String picUrl = null;
     private LocalDateTime updateDate;

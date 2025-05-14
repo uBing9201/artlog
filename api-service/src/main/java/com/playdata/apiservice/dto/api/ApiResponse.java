@@ -1,4 +1,4 @@
-package com.playdata.apiservice.dto;
+package com.playdata.apiservice.dto.api;
 
 import lombok.Data;
 

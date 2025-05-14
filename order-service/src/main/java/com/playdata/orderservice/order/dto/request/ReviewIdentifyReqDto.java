@@ -9,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class ReviewIdentifyReqDto {
     private Long userKey;
-    private Long contentId;
+    private String contentId;
 }

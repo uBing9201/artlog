@@ -16,7 +16,7 @@ public class Review extends BaseTimeEntity {
     private Long userKey;
 
     @Column(nullable = false)
-    private Long contentId;
+    private String contentId;
 
     @Column(nullable = true)
     @Setter

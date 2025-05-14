@@ -15,7 +15,7 @@ public class Orders extends BaseTimeEntity {
     private Long userKey;
 
     @Column(nullable = false)
-    private Long contentId;
+    private String contentId;
 
     @Column(nullable = false)
     private Long totalPrice;

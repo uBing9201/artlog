@@ -14,7 +14,7 @@ public class OrderSaveReqDto {
     private Long userKey;
 
     @Positive
-    private Long contentId;
+    private String contentId;
 
     // NULL 가능
     private Long userCouponKey;

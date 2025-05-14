@@ -8,6 +8,6 @@ import lombok.*;
 public class OrderSaveResDto {
     private Long id;
     private Long userKey;
-    private Long contentId;
+    private String contentId;
     private Long totalPrice;
 }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class OrderInfoResDto {
     private Long id;
     private Long userKey;
-    private Long contentId;
+    private String contentId;
     private Long totalPrice;
     private boolean active;
     private LocalDateTime registDate;
