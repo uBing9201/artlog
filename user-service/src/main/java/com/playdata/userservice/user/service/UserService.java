@@ -3,6 +3,7 @@ package com.playdata.userservice.user.service;
 import com.playdata.userservice.common.dto.LoginResultDto;
 import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.common.entity.YnType;
+import com.playdata.userservice.user.dto.request.UserCheckUpdatePw;
 import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
@@ -156,7 +157,28 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
         );
+
+        if(encoder.matches(updatePwDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("변경하려는 비밀번호가 이전 비밀번호와 동일합니다.");
+        }
+
         user.updatePw(encoder.encode(updatePwDto.getPassword()));
+        return user;
+    }
+
+    @Transactional
+    public User checkUpdatePw(UserCheckUpdatePw checkUpdatePwDto) {
+        User user = userRepository.findById(checkUpdatePwDto.getId()).orElseThrow(
+                () -> new EntityNotFoundException("사용자를 찾을 수 없습니다.")
+        );
+
+        if (!encoder.matches(checkUpdatePwDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다.");
+        } else if(encoder.matches(checkUpdatePwDto.getNewPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("변경하려는 비밀번호가 이전 비밀번호와 동일합니다.");
+        }
+
+        user.updatePw(encoder.encode(checkUpdatePwDto.getNewPassword()));
         return user;
     }
 

@@ -4,6 +4,7 @@ import com.playdata.userservice.common.auth.JwtProvider;
 import com.playdata.userservice.common.dto.CommonResDto;
 import com.playdata.userservice.common.dto.LoginResultDto;
 import com.playdata.userservice.common.entity.HintKeyType;
+import com.playdata.userservice.user.dto.request.UserCheckUpdatePw;
 import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserCouponResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
@@ -160,8 +161,20 @@ public class UserController {
      * @return
      */
     @PostMapping("/updatePw/{id}")
-    public ResponseEntity<?> updatePw(@PathVariable Long id, @RequestBody UserUpdatePw updatePwDto) {
+    public ResponseEntity<?> updatePw(@PathVariable Long id, @Valid @RequestBody UserUpdatePw updatePwDto) {
         User user = userService.updatePw(id, updatePwDto);
+        CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료", user.getUserName());
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    /**
+     * 마이페이지 - 비밀번호변경
+     * @param checkUpdatePwDto
+     * @return
+     */
+    @PostMapping("/updatePw")
+    public ResponseEntity<?> userCheckUpdatePw(@Valid @RequestBody UserCheckUpdatePw checkUpdatePwDto) {
+        User user = userService.checkUpdatePw(checkUpdatePwDto);
         CommonResDto resDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료", user.getUserName());
         return ResponseEntity.ok().body(resDto);
     }
