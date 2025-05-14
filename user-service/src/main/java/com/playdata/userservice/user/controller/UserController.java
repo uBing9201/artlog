@@ -46,15 +46,10 @@ public class UserController {
      */
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@Valid @RequestBody UserInsertReqDto insertDto) {
-
         User saved = userService.userInsert(insertDto);
-        // ResponseEntity는 응답을 줄 때 다양한 정보를 한번에 포장해서 넘길 수 있습니다.
-        // 요청에 따른 응답 상태 코드, 응답 헤더에 정보를 추가, 일관된 응답 처리를 제공합니다.
-
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.CREATED,
                 "회원가입 완료", saved.getUserId());
-
         return ResponseEntity.ok().body(resDto);
     }
 
@@ -66,12 +61,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDto loginDto) {
         LoginResultDto result = userService.login(loginDto);
-
         if (!result.isSuccess()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new CommonResDto(HttpStatus.UNAUTHORIZED, result.getMessage(), null));
         }
-
         User user = result.getUser();
         String token = jwtProvider.createToken(String.valueOf(user.getId()), user.getRole().toString());
 
