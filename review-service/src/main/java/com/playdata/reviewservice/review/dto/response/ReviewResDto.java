@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Builder @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewResDto {
+    private Long id;
     private Long userKey;
     private String contentId;
     private String reviewContent = null;
