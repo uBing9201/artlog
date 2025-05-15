@@ -6,5 +6,5 @@ import lombok.*;
 @Builder @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewIdentifyResDto {
-    private boolean isValid = true;
+    private boolean isValid;
 }
