@@ -147,6 +147,7 @@ public class ApiService {
                                 if(data.getLocalId().equals(order.getContentId())) {
                                     return ContentUserResDto.builder()
                                             .id(order.getId())
+                                            .contentId(order.getContentId())
                                             .userKey(order.getUserKey())
                                             .active(order.isActive())
                                             .totalPrice(order.getTotalPrice())
@@ -167,7 +168,7 @@ public class ApiService {
         log.error("*******************************************");
 
         for (ContentUserResDto dto : resDtoList) {
-            Boolean isReviewed = reviewFeignClient.findByContentFeignId(dto.getContentId()).getBody();
+            Boolean isReviewed = reviewFeignClient.findByApiFeign(dto.getContentId(), userKey).getBody();
             dto.setIsReviewed(isReviewed);
         }
 

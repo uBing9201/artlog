@@ -173,4 +173,13 @@ public class ReviewService {
                         .build())
                 .toList();
     }
+
+    public boolean findByApiFeign(String contentId, Long userKey) {
+        List<Review> resDto = reviewRepository.findByContentIdAndUserKey(contentId, userKey);
+        if (resDto.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
 }
