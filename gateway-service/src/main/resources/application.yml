@@ -11,7 +11,7 @@ spring:
           "[/**]": # 모든 경로에 대한 CORS 설정을 시작하겠다.
             allowed-origins:
               - "http://localhost:5173"
-              - "http://artlog-s3-front-end-1733.s3-website-ap-southeast-2.amazonaws.com"
+              - "http://artlog-s3-instance-front-21974.s3-website.ap-northeast-2.amazonaws.com/"
             allowed-methods:
               - GET
               - POST
