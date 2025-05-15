@@ -28,6 +28,7 @@ public class Coupon extends BaseTimeEntity {
     private Integer period;
 
     @Column(nullable = false)
+    @Builder.Default
     private Character active = 'Y';
 
    @Column(nullable = true)
