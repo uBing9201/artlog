@@ -11,7 +11,7 @@ public class ReviewResDto {
     private Long id;
     private Long userKey;
     private String contentId;
-    private String reviewContent = null;
-    private String picUrl = null;
+    private String reviewContent;
+    private String picUrl;
     private LocalDateTime updateDate;
 }

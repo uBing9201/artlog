@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 public class CouponResDto {
     private Long id;
     private String serialNumber;
-    private LocalDateTime expireDate = null;
-    private Integer period = null;
-    private Integer count = null;
+    private LocalDateTime expireDate;
+    private Integer period;
+    private Integer count;
     private String couponTitle;
     private LocalDateTime registDate;
     private LocalDateTime updateDate;
