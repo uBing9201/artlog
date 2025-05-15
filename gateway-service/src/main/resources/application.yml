@@ -68,7 +68,7 @@ spring:
                 preLogger: true
                 postLogger: true
             - RewritePath=/review-service/(?<segment>.*), /$\{segment}
-            - name: AuthorizationHeaderFilter
+#            - name: AuthorizationHeaderFilter
 #
         - id: order-service
           uri: lb://ORDER-SERVICE

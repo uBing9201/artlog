@@ -1,6 +1,8 @@
 package com.playdata.orderservice.common.filter;
 
 import com.playdata.orderservice.common.auth.JwtProvider;
+import com.playdata.orderservice.common.auth.Role;
+import com.playdata.orderservice.common.auth.TokenUserInfo;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,13 +47,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         Claims claim = jwtProvider.getClaim(token);
         if (claim != null) {
-            String username = claim.getSubject();
+            String userKey = claim.getSubject();
+            Long id = Long.parseLong(userKey);
             // ROLE 생기면 추가
             String role = claim.get("role", String.class);
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
             // SecurityContextHolder에 username 추가
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(new TokenUserInfo(id, Role.valueOf(role)), null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

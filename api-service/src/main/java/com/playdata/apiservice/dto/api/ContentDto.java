@@ -87,52 +87,22 @@ public class ContentDto {
 
     public ContentResDto toResDto() {
         // 1. localId 검증
-        if (this.localId == null || this.localId.isEmpty()) {
-            log.error("Local ID가 유효하지 않습니다. : " + this.localId);
-            return null;
-        }
+        if (isLocalIdValid()) return null;
 
         // 2. title 검증
-        if (this.title == null || this.title.isEmpty() || this.title.equals("테스트") || this.title.equals("test")) {
-            log.error("Title이 유효하지 않습니다. :" + this.title);
-            return null;
-        }
+        if (isTitleValid()) return null;
 
         // 3. eventSite 검증
-        if (this.eventSite == null || this.eventSite.isEmpty() || this.eventSite.equals("해외")) {
-            log.error("Event Site가 유효하지 않습니다. : " + this.eventSite);
-            return null;
-        }
+        if (isEventSiteValid()) return null;
 
         // 4. url 검증
-        if (this.url == null || this.url.isEmpty() || !this.url.matches("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$")) {
-            log.error("url이 유효하지 않습니다.");
-            return null;
-        }
+        if (isUrlValid()) return null;
 
         // 5. charge 검증
-        if (this.charge == null || this.charge.isEmpty() || this.charge.equals("-") || this.charge.equals("무료") || this.charge.equals("미정")) {
-            this.charge = "0";
-        } else if (!this.charge.matches("[0-9]+")) {
-            if (this.charge.contains("원")) {
-                StringBuilder chargeSb = new StringBuilder();
-                for (char c : this.charge.toCharArray()) {
-                    if (c >= '0' && c <= '9') {
-                        chargeSb.append(c);
-                    }
-                }
-                this.charge = chargeSb.toString();
-            } else {
-                log.error("charge가 유효하지 않습니다. : " + this.charge);
-                return null;
-            }
-        }
+        if (isChargeValid()) return null;
 
         // 6. imageObject 검증
-        if (this.imageObject == null || this.imageObject.isEmpty() || !this.imageObject.matches("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$")) {
-            log.error("imageObject가 유효하지 않습니다.");
-            return null;
-        }
+        if (isImageObjectValid()) return null;
 
         // 7. period 검증
         long periodL = 0L;
@@ -179,4 +149,75 @@ public class ContentDto {
                 .endDate(endDateStr)
                 .build();
     }
+
+    private boolean isImageObjectValid() {
+        if (this.imageObject == null || this.imageObject.isEmpty() || !this.imageObject.matches("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$")) {
+            log.error("imageObject가 유효하지 않습니다.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isChargeValid() {
+        if (this.charge == null || this.charge.isEmpty() || this.charge.equals("-") || this.charge.equals("무료") || this.charge.equals("미정")) {
+            this.charge = "0";
+        } else if (!this.charge.matches("[0-9]+")) {
+            if (this.charge.contains("원")) {
+                StringBuilder chargeSb = new StringBuilder();
+                boolean flag = false;
+                for (char c : this.charge.toCharArray()) {
+                    if (c >= '0' && c <= '9') {
+                        flag = true;
+                        chargeSb.append(c);
+                    } else if (c != ',' && flag) {
+                        break;
+                    }
+                }
+                this.charge = chargeSb.toString();
+            } else {
+                log.error("charge가 유효하지 않습니다. : " + this.charge);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isUrlValid() {
+        if (this.url == null || this.url.isEmpty() || !this.url.matches("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$")) {
+            log.error("url이 유효하지 않습니다.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isEventSiteValid() {
+        if (this.eventSite == null || this.eventSite.isEmpty() || this.eventSite.equals("해외")) {
+            log.error("Event Site가 유효하지 않습니다. : " + this.eventSite);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isTitleValid() {
+        if (this.title == null || this.title.isEmpty() || this.title.equals("테스트") || this.title.equals("test")) {
+            log.error("Title이 유효하지 않습니다. :" + this.title);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isLocalIdValid() {
+        // 1. localId 검증
+        if (this.localId == null || this.localId.isEmpty()) {
+            log.error("Local ID가 유효하지 않습니다. : " + this.localId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isValid() {
+        return !isLocalIdValid() && !isTitleValid() && !isEventSiteValid() && !isUrlValid() && !isImageObjectValid() && !isChargeValid();
+    }
+
+
 }

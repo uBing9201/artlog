@@ -1,5 +1,6 @@
 package com.playdata.orderservice.order.service;
 
+import com.playdata.orderservice.common.auth.TokenUserInfo;
 import com.playdata.orderservice.common.exception.InvalidAccessOrderException;
 import com.playdata.orderservice.order.dto.request.ReviewIdentifyReqDto;
 import com.playdata.orderservice.order.dto.response.OrderCancelResDto;
@@ -32,9 +33,9 @@ public class OrderService {
      * @return id, userKey, contentId, totalPrice
      */
     @Transactional
-    public OrderSaveResDto insert(OrderSaveReqDto dto) {
+    public OrderSaveResDto insert(TokenUserInfo userInfo, OrderSaveReqDto dto) {
         Orders order = Orders.builder()
-                .userKey(dto.getUserKey())
+                .userKey(userInfo.getId())
                 .contentId(dto.getContentId())
                 .userCouponKey(dto.getUserCouponKey())
                 .totalPrice(dto.getTotalPrice())
@@ -44,7 +45,7 @@ public class OrderService {
         orderRepository.save(order);
 
         return OrderSaveResDto.builder()
-                .userKey(order.getUserKey())
+                .userKey(userInfo.getId())
                 .totalPrice(order.getTotalPrice())
                 .contentId(order.getContentId())
                 .id(order.getId())

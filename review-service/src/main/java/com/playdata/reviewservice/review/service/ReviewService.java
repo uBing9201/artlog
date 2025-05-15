@@ -1,5 +1,6 @@
 package com.playdata.reviewservice.review.service;
 
+import com.playdata.reviewservice.common.auth.TokenUserInfo;
 import com.playdata.reviewservice.common.exception.FeignServiceException;
 import com.playdata.reviewservice.common.exception.InvalidAccessReviewException;
 import com.playdata.reviewservice.review.dto.response.ReviewIdentifyResDto;
@@ -29,17 +30,20 @@ public class ReviewService {
 
     /**
      * 리뷰 등록
-     * @param dto userKey, contentId, reviewContent, picUrl
+     *
+     * @param userInfo
+     * @param dto      userKey, contentId, reviewContent, picUrl
      * @return id
      * @throws FeignServiceException   feign 처리 중 오류
      * @throws EntityNotFoundException 유효한 주문 정보가 없음
      */
-    public ReviewDefaultResDto insert(ReviewSaveReqDto dto) throws FeignServiceException, EntityNotFoundException {
+    public ReviewDefaultResDto insert(TokenUserInfo userInfo, ReviewSaveReqDto dto) throws FeignServiceException, EntityNotFoundException {
+        log.error(dto.toString());
         // Feign 사용하여 order 정보 있는지 확인 후 등록 진행
         ReviewIdentifyResDto orderDto = orderFeignClient.isOrdered(
                 ReviewIdentifyReqDto.builder()
                         .contentId(dto.getContentId())
-                        .userKey(dto.getUserKey())
+                        .userKey(userInfo.getId())
                         .build()
         ).getBody();
 
@@ -56,7 +60,7 @@ public class ReviewService {
         // 리뷰 객체 생성 및 저장
         Review review = Review.builder()
                 .reviewContent(dto.getReviewContent())
-                .userKey(dto.getUserKey())
+                .userKey(userInfo.getId())
                 .pirUrl(dto.getPicUrl())
                 .contentId(dto.getContentId())
                 .active(YnType.Y)

@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playdata.apiservice.dto.api.ApiResponse;
 import com.playdata.apiservice.dto.api.ContentDto;
 import com.playdata.apiservice.dto.api.ContentResDto;
+import com.playdata.apiservice.dto.api.ContentUserResDto;
+import com.playdata.apiservice.dto.common.OrderInfoResDto;
 import com.playdata.apiservice.exception.PublicApiException;
+import com.playdata.apiservice.feign.OrderFeignClient;
+import com.playdata.apiservice.feign.ReviewFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ApiService {
     private final ObjectMapper objectMapper;
+    private final OrderFeignClient orderFeignClient;
+    private final ReviewFeignClient reviewFeignClient;
 
     public List<ContentDto> first() throws IOException {
 //        String baseUrl = "http://api.kcisa.kr/openapi/API_CCA_145/request";
@@ -62,17 +68,16 @@ public class ApiService {
     }
 
     public List<ContentDto> getApiData(long numOfRows, long pageNo) throws IOException, PublicApiException {
-        // 오류를 대비해 요청한 개수의 2배수의 10개 더 준비
-        String numOfRowsStr = Long.toString(numOfRows + numOfRows + 10);
-        String pageNoStr = Long.toString(pageNo);
+        // 오류를 대비해 요청한 개수의 10개 더 준비
+        String numOfRowsStr = Long.toString((numOfRows + 20) * pageNo);
 
         // 데이터 요청
         HttpURLConnection conn = null;
         try {
             StringBuilder urlBuilder = new StringBuilder("http://api.kcisa.kr/openapi/API_CCA_145/request"); /*URL*/
-            urlBuilder.append("?").append(URLEncoder.encode("serviceKey", StandardCharsets.UTF_8)).append("=50c4abb3-0b85-4348-809c-b1df4198f4ef"); /*서비스키*/
+            urlBuilder.append("?").append(URLEncoder.encode("serviceKey", StandardCharsets.UTF_8)).append("=3b0e834a-ebcb-45b5-b6fb-728277dd565c"); /*서비스키*/
             urlBuilder.append("&").append(URLEncoder.encode("numOfRows", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode(numOfRowsStr, StandardCharsets.UTF_8)); /*세션당 요청레코드수*/
-            urlBuilder.append("&").append(URLEncoder.encode("pageNo", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode(pageNoStr, StandardCharsets.UTF_8)); /*페이지수*/
+            urlBuilder.append("&").append(URLEncoder.encode("pageNo", StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode("1", StandardCharsets.UTF_8)); /*페이지수*/
 
             URL url = new URL(urlBuilder.toString());
             conn = (HttpURLConnection) url.openConnection();
@@ -91,7 +96,6 @@ public class ApiService {
         if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300)
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         else {
-            log.error(conn.getErrorStream().toString());
             throw new PublicApiException("응답 수신에 실패하였습니다.");
         }
 
@@ -111,6 +115,63 @@ public class ApiService {
         } catch (Exception e) {
             throw new PublicApiException("JSON 파싱 실패: " + e.getMessage(), e);
         }
+
+    }
+
+    public List<ContentResDto> getData(Long numOfRows, Long pageNo) throws IOException, PublicApiException {
+        List<ContentDto> apiData = getApiData(numOfRows, pageNo);
+
+        // 유효성 검증 후 List 형태로 반환
+        return apiData.stream()
+                .map(ContentDto::toResDto)
+                .filter(Objects::nonNull)
+                .distinct()
+                .skip(numOfRows * (pageNo - 1))
+                .limit(numOfRows)
+                .toList();
+    }
+
+    public List<ContentUserResDto> getDataByUserKey(Long userKey) throws IOException, PublicApiException {
+        List<ContentDto> apiData = getApiData(100, 1).stream().filter(ContentDto::isValid).toList();
+        List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
+        log.error("-------------------------------------");
+        log.error(orderList.toString());
+        log.error("-------------------------------------");
+        log.error(apiData.toString());
+
+        List<ContentUserResDto> resDtoList =
+                orderList.stream()
+                        .map(order ->
+                        {
+                            for (ContentDto data : apiData) {
+                                if(data.getLocalId().equals(order.getContentId())) {
+                                    return ContentUserResDto.builder()
+                                            .id(order.getId())
+                                            .userKey(order.getUserKey())
+                                            .active(order.isActive())
+                                            .totalPrice(order.getTotalPrice())
+                                            .registDate(order.getRegistDate())
+                                            .contentTitle(data.getTitle())
+                                            .contentThumbnail(data.getImageObject())
+                                            .isReviewed(false)
+                                            .build();
+                                }
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .toList();
+
+        log.error("*******************************************");
+        log.error(resDtoList.toString());
+        log.error("*******************************************");
+
+        for (ContentUserResDto dto : resDtoList) {
+            Boolean isReviewed = reviewFeignClient.findByContentFeignId(dto.getContentId()).getBody();
+            dto.setIsReviewed(isReviewed);
+        }
+
+        return resDtoList;
 
     }
 }
