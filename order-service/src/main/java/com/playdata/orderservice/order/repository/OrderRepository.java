@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Orders, Long> {
     @Query("SELECT o FROM Orders o WHERE o.userKey = :userKey AND o.contentId = :contentId")
-    Optional<Orders> findByUserKeyAndContentId(@Param("userKey") Long userKey, @Param("contentId") String contentId);
+    List<Orders> findByUserKeyAndContentId(@Param("userKey") Long userKey, @Param("contentId") String contentId);
 
     List<Orders> findByUserKey(Long userKey);
 }
