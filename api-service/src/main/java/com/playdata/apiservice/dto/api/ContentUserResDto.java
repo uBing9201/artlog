@@ -21,12 +21,12 @@ public class ContentUserResDto {
     private String contentTitle;
     private String contentThumbnail;
 
-//    private String contentVenue;
-//    private String contentUrl;
-//    private Long contentCharge;
-//    private Long contentPeriod;
-//    private String startDate;
-//    private String endDate;
+    private String contentVenue;
+    private String contentUrl;
+    private Long contentCharge;
+    private Long contentPeriod;
+    private String startDate;
+    private String endDate;
 
     @Override
     public boolean equals(Object o) {

@@ -210,7 +210,9 @@ public class UserService {
      */
     public UserCouponInsertResDto userCouponSave(UserCouponInsertReqDto couponInsertReqDto) {
         try {
+            log.error(couponInsertReqDto.toString());
             Long couponKey = couponFeignClient.findBySerial(couponInsertReqDto.getSerialNumber()).getBody();
+            log.error(couponKey.toString());
             UserCoupon userCoupon = couponInsertReqDto.toEntity(couponKey);
             UserCoupon saved = userCouponRepository.save(userCoupon);
             return UserCouponInsertResDto.fromEntity(saved);

@@ -1,12 +1,12 @@
 package com.playdata.couponservice.coupons.controller;
 
+import com.playdata.couponservice.common.auth.TokenUserInfo;
 import com.playdata.couponservice.common.dto.CommonResDto;
 import com.playdata.couponservice.common.exception.InvalidCouponAccessException;
 import com.playdata.couponservice.common.exception.InvalidCouponRegisterException;
 import com.playdata.couponservice.coupons.dto.request.CouponReqDto;
 import com.playdata.couponservice.coupons.dto.response.*;
 import com.playdata.couponservice.coupons.service.CouponService;
-import com.playdata.reviewservice.common.auth.TokenUserInfo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
