@@ -140,6 +140,7 @@ public class ReviewService {
         return reviewList.stream()
                 .filter(review -> review.getActive() != YnType.N && review.getDeleted() != YnType.Y)
                 .map(review -> ReviewResDto.builder()
+                        .id(review.getId())
                         .userKey(review.getUserKey())
                         .contentId(review.getContentId())
                         .updateDate(review.getUpdateDate())
@@ -165,6 +166,7 @@ public class ReviewService {
         return reviewList.stream()
                 .filter(review -> review.getActive() != YnType.N && review.getDeleted() != YnType.Y)
                 .map(review -> ReviewResDto.builder()
+                        .id(review.getId())
                         .userKey(review.getUserKey())
                         .contentId(review.getContentId())
                         .updateDate(review.getUpdateDate())
@@ -172,5 +174,14 @@ public class ReviewService {
                         .picUrl(review.getPirUrl())
                         .build())
                 .toList();
+    }
+
+    public boolean findByApiFeign(String contentId, Long userKey) {
+        List<Review> resDto = reviewRepository.findByContentIdAndUserKey(contentId, userKey);
+        if (resDto.isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 }

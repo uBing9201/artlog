@@ -1,6 +1,6 @@
-package com.playdata.reviewservice.common.configs;
+package com.playdata.couponservice.common.configs;
 
-import com.playdata.reviewservice.common.filter.JwtAuthFilter;
+import com.playdata.couponservice.common.filter.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // *** 허용하는 url 작성 ***
-                        .requestMatchers("/healthcheck", "/review/findByApiFeign").permitAll()
+                        .requestMatchers("/healthcheck", "/coupon/findBySerial/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

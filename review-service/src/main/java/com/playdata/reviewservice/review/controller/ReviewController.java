@@ -79,11 +79,10 @@ public class ReviewController {
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당 Id에 대한 리뷰가 정상적으로 조회되었습니다.", resDtoList));
     }
 
-    @GetMapping("/findByContentIdFeign/{contentId}")
-    public ResponseEntity<Boolean> findByContentIdFeign(@PathVariable String contentId) throws EntityNotFoundException {
-        List<ReviewResDto> resDtoList = reviewService.findByContentId(contentId);
-        Boolean response = !resDtoList.isEmpty();
-        return ResponseEntity.ok().body(response);
+    @GetMapping("/findByApiFeign")
+    ResponseEntity<Boolean> findByApiFeign(@RequestParam String contentId, @RequestParam Long userKey) {
+        boolean isPresent = reviewService.findByApiFeign(contentId, userKey);
+        return ResponseEntity.ok().body(isPresent);
     }
 
     /**

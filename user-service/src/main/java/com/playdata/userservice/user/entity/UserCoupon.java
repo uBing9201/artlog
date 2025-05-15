@@ -41,6 +41,7 @@ public class UserCoupon extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 1)
+    @Builder.Default
     private YnType active = YnType.YES;
 
 }

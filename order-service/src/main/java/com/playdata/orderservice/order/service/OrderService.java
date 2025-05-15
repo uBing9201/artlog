@@ -82,13 +82,19 @@ public class OrderService {
      * @return isValid
      */
     public ReviewIdentifyResDto isOrdered(ReviewIdentifyReqDto reqDto) {
-        Optional<Orders> order = orderRepository.findByUserKeyAndContentId(reqDto.getUserKey(), reqDto.getContentId());
-        boolean isOrdered = order.isPresent();
+        List<Orders> orderList = orderRepository.findByUserKeyAndContentId(reqDto.getUserKey(), reqDto.getContentId());
+        boolean isOrdered = !orderList.isEmpty();
 
-        // 취소된 주문인지 확인
-        if(isOrdered && order.get().getActive() == YnType.N) {
-            isOrdered = false;
+        boolean flag = false;
+        if(isOrdered) {
+            // 취소된 주문인지 확인
+            for (Orders order : orderList) {
+                if(order.getActive() == YnType.Y) {
+                    flag = true;
+                }
+            }
         }
+        if(!flag) isOrdered = false;
 
         log.error("isOrdered: " + isOrdered);
 

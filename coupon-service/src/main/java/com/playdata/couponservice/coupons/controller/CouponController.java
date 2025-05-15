@@ -1,5 +1,6 @@
 package com.playdata.couponservice.coupons.controller;
 
+import com.playdata.couponservice.common.auth.TokenUserInfo;
 import com.playdata.couponservice.common.dto.CommonResDto;
 import com.playdata.couponservice.common.exception.InvalidCouponAccessException;
 import com.playdata.couponservice.common.exception.InvalidCouponRegisterException;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -77,6 +80,12 @@ public class CouponController {
     @GetMapping("/findByUserKey/{userKey}")
     public ResponseEntity<?> findByUserKey(@PathVariable Long userKey) {
         List<UserCouponInfoResDto> resDtoList = couponService.findByUserKey(userKey);
+        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당하는 유저의 보유 쿠폰 정보를 조회하였습니다.", resDtoList));
+    }
+
+    @GetMapping("/findByUserKey")
+    public ResponseEntity<?> findByUserKey(@AuthenticationPrincipal TokenUserInfo userInfo) {
+        List<UserCouponInfoResDto> resDtoList = couponService.findByUserKey(userInfo.getId());
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당하는 유저의 보유 쿠폰 정보를 조회하였습니다.", resDtoList));
     }
 

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "coupon-service")
-public interface CouponFeignClient {
+public interface    CouponFeignClient {
 
     /**
      * 사용자 쿠폰 조회

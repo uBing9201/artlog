@@ -20,6 +20,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -144,9 +147,41 @@ public class ApiService {
                         .map(order ->
                         {
                             for (ContentDto data : apiData) {
+                                long periodL = 0L;
+                                String startDateStr, endDateStr;
+                                if (data.getPeriod() == null || data.getPeriod().isEmpty()) {
+                                    log.error("period가 유효하지 않습니다. : " + data.getPeriod());
+                                    return null;
+                                } else {
+                                    try {
+                                        String[] dates;
+                                        if (!data.getPeriod().contains("~")) {
+                                            dates = data.getPeriod().split(" ");
+                                        } else {
+                                            dates = data.getPeriod().split("~");
+                                        }
+                                        // 1. 시작일과 종료일 분리
+                                        startDateStr = dates[0].trim();
+                                        endDateStr = dates[dates.length - 1].trim();
+
+                                        // 2. 문자열을 LocalDate로 파싱
+                                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                        LocalDate startDate = LocalDate.parse(startDateStr, formatter);
+                                        LocalDate endDate = LocalDate.parse(endDateStr, formatter);
+
+                                        // 3. 일수 계산 (양 끝 포함하려면 +1)
+                                        periodL = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+                                        log.info("startDate:" + startDateStr + " endDate:" + endDateStr);
+                                    } catch (Exception e) {
+                                        log.error("period 파싱에 실패하였습니다. : " + data.getPeriod());
+                                        return null;
+                                    }
+                                }
                                 if(data.getLocalId().equals(order.getContentId())) {
                                     return ContentUserResDto.builder()
                                             .id(order.getId())
+                                            .contentId(order.getContentId())
                                             .userKey(order.getUserKey())
                                             .active(order.isActive())
                                             .totalPrice(order.getTotalPrice())
@@ -154,6 +189,12 @@ public class ApiService {
                                             .contentTitle(data.getTitle())
                                             .contentThumbnail(data.getImageObject())
                                             .isReviewed(false)
+                                            .contentVenue(data.getEventSite())
+                                            .contentUrl(data.getUrl())
+                                            .contentCharge(Long.parseLong(data.getCharge()))
+                                            .contentPeriod(periodL)
+                                            .startDate(startDateStr)
+                                            .endDate(endDateStr)
                                             .build();
                                 }
                             }
@@ -167,7 +208,7 @@ public class ApiService {
         log.error("*******************************************");
 
         for (ContentUserResDto dto : resDtoList) {
-            Boolean isReviewed = reviewFeignClient.findByContentFeignId(dto.getContentId()).getBody();
+            Boolean isReviewed = reviewFeignClient.findByApiFeign(dto.getContentId(), userKey).getBody();
             dto.setIsReviewed(isReviewed);
         }
 
