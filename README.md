@@ -103,4 +103,6 @@ https://docs.google.com/spreadsheets/d/1AnH1tIr7nVC0chcegOQkAXPOEpxHRhhUNtokbMcq
 
 ## ------------------------------------------------------------------------------------------
 
-## 테스트케이스 결고
+## 테스트케이스 결과
+
+https://docs.google.com/spreadsheets/d/1AnH1tIr7nVC0chcegOQkAXPOEpxHRhhUNtokbMcqJYY/edit?gid=1503355747#gid=1503355747
