@@ -13,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +34,8 @@ public class CouponController {
      * @return id, couponTitle
      * @throws InvalidCouponRegisterException 쿠폰 등록 실패
      */
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@RequestBody @Valid CouponReqDto dto) throws InvalidCouponRegisterException {
         CouponSaveResDto resDto = couponService.insert(dto);
@@ -43,6 +47,7 @@ public class CouponController {
      * @param id id
      * @return id, valid
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/isValid/{id}")
     public ResponseEntity<?> isValid(@PathVariable Long id) {
         CouponValidateDto resDto = couponService.isValid(id);
@@ -53,6 +58,7 @@ public class CouponController {
      * 쿠폰 전체 조회
      * @return id, serialNumber, expireDate, period, count, couponTitle, registDate, updateDate
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/findByAll")
     public ResponseEntity<?> findByAll() {
         List<CouponResDto> resDtoList = couponService.findByAll();
@@ -66,6 +72,7 @@ public class CouponController {
      * @return id, couponTitle, count
      * @throws InvalidCouponAccessException 쿠폰에 대한 잘못된 접근
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/findCountById/{id}")
     public ResponseEntity<?> findCountById(@PathVariable Long id) throws InvalidCouponAccessException {
         CouponCountResDto resDto= couponService.findCountById(id);
