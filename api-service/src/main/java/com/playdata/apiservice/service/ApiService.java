@@ -99,7 +99,7 @@ public class ApiService {
         if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300)
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         else {
-            throw new PublicApiException("응답 수신에 실패하였습니다.");
+            throw new PublicApiException("응답 수신에 실패하였습니다. 에러 코드 : " + conn.getResponseCode());
         }
 
         // 정상 응답 Json 변환

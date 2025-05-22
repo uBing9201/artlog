@@ -34,6 +34,11 @@ public class OrderService {
      */
     @Transactional
     public OrderSaveResDto insert(TokenUserInfo userInfo, OrderSaveReqDto dto) {
+        log.error("userInfo.id: {}", userInfo.getId());
+        log.error("userInfo.role: {}", userInfo.getRole());
+
+        log.error("dto: {}", dto.toString());
+
         Orders order = Orders.builder()
                 .userKey(userInfo.getId())
                 .contentId(dto.getContentId())

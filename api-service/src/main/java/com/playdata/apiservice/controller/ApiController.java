@@ -22,6 +22,7 @@ import java.util.List;
 public class ApiController {
     private final ApiService apiService;
 
+
     @GetMapping("/get/{number}")
     public ResponseEntity<?> get(@PathVariable Long number) throws IOException, PublicApiException {
         List<ContentResDto> resDto = apiService.getData(number, 1L);
