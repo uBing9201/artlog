@@ -11,6 +11,7 @@ import com.playdata.apiservice.feign.OrderFeignClient;
 import com.playdata.apiservice.feign.ReviewFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -70,6 +71,7 @@ public class ApiService {
                 .toList();
     }
 
+    @Cacheable(value = "exhibitionCache", key = "#numOfRows" + '-' + "#pageNo")
     public List<ContentDto> getApiData(long numOfRows, long pageNo) throws IOException, PublicApiException {
         // 오류를 대비해 요청한 개수의 10개 더 준비
         String numOfRowsStr = Long.toString((numOfRows + 20) * pageNo);
