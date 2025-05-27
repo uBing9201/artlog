@@ -10,16 +10,11 @@ import org.apache.logging.log4j.message.Message;
 @Builder @AllArgsConstructor
 @NoArgsConstructor
 public class OrderSaveReqDto {
-    @Positive
     private Long userKey;
-
-    @Positive
     private String contentId;
 
     // NULL 가능
     private Long userCouponKey;
-
-    @PositiveOrZero
     private Long totalPrice;
 }
 
