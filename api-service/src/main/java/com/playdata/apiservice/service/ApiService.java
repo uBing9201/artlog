@@ -139,6 +139,15 @@ public class ApiService {
                 .toList();
     }
 
+    public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException {
+        List<ContentUserResDto> dataByUserKey = getDataByUserKey(userKey);
+        return dataByUserKey.stream()
+                .skip(numOfRows * (pageNo - 1))
+                .limit(numOfRows)
+                .toList();
+    }
+
+    // 이게 유저 키 받아서 데이터 넘겨주는 함수..인데..?
     public List<ContentUserResDto> getDataByUserKey(Long userKey) throws IOException, PublicApiException {
         List<ContentDto> apiData = getApiData(1).stream().filter(ContentDto::isValid).toList();
         List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();

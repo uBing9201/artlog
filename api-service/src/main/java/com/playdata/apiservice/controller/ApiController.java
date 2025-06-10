@@ -22,6 +22,9 @@ import java.util.List;
 public class ApiController {
     private final ApiService apiService;
 
+    /**
+     * @deprecated
+     */
     @GetMapping("/get/{number}")
     public ResponseEntity<?> get(@PathVariable Long number) throws IOException, PublicApiException {
         List<ContentResDto> resDto = apiService.getData(number, 1L);
@@ -39,6 +42,13 @@ public class ApiController {
     @GetMapping("/selectByUserKey/{userKey}")
     public ResponseEntity<?> selectByUserKey(@PathVariable Long userKey) throws IOException, PublicApiException {
         List<ContentUserResDto> resDto = apiService.getDataByUserKey(userKey);
+        log.info(resDto.toString());
+        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "데이터 불러오기에 성공하였습니다.", resDto));
+    }
+
+    @GetMapping("/selectByUserKeyPaging")
+    public ResponseEntity<?> selectByUserKeyPaging(@RequestParam Long userKey, @RequestParam Long pageNo, @RequestParam Long numOfRows) throws IOException, PublicApiException {
+        List<ContentUserResDto> resDto = apiService.getDataByUserKeyPaging(userKey, pageNo, numOfRows);
         log.info(resDto.toString());
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "데이터 불러오기에 성공하였습니다.", resDto));
     }
