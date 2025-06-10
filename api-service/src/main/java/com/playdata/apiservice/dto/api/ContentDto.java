@@ -86,6 +86,10 @@ public class ContentDto {
 
 
     public ContentResDto toResDto() {
+        if(collectedDate.startsWith("2025-06-05")) {
+            return null;
+        }
+
         // 1. localId 검증
         if (isLocalIdValid()) return null;
 
@@ -152,7 +156,7 @@ public class ContentDto {
 
     private boolean isImageObjectValid() {
         if (this.imageObject == null || this.imageObject.isEmpty() || !this.imageObject.matches("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$")) {
-            log.error("imageObject가 유효하지 않습니다.");
+            log.error("imageObject가 유효하지 않습니다. : {}", this.imageObject);
             return true;
         }
         return false;
@@ -178,6 +182,8 @@ public class ContentDto {
                 log.error("charge가 유효하지 않습니다. : " + this.charge);
                 return true;
             }
+        } else if(this.charge.contains("\"")) {
+            return true;
         }
         return false;
     }
@@ -216,7 +222,7 @@ public class ContentDto {
     }
 
     public boolean isValid() {
-        return !isLocalIdValid() && !isTitleValid() && !isEventSiteValid() && !isUrlValid() && !isImageObjectValid() && !isChargeValid();
+        return !isLocalIdValid() && !isEventSiteValid() && !isTitleValid() && !isUrlValid() && !isChargeValid();
     }
 
 
