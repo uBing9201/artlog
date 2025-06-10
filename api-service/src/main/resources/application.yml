@@ -4,4 +4,7 @@ server:
 spring:
   application:
     name: api-service
-
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=5000,expireAfterWrite=10h

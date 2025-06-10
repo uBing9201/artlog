@@ -11,6 +11,7 @@ import com.playdata.apiservice.feign.OrderFeignClient;
 import com.playdata.apiservice.feign.ReviewFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -55,11 +56,11 @@ public class ApiService {
 //            throw new RuntimeException("JSON 파싱 실패: " + e.getMessage(), e);
 //        }
 
-        return getApiData(5, 1);
+        return getApiData(1);
     }
 
     public List<ContentResDto> getDataByNumOfRows(long number) throws IOException, PublicApiException {
-        List<ContentDto> apiData = getApiData(number, 1);
+        List<ContentDto> apiData = getApiData(1);
 
         // 유효성 검증 후 List 형태로 반환
         return apiData.stream()
@@ -70,9 +71,12 @@ public class ApiService {
                 .toList();
     }
 
-    public List<ContentDto> getApiData(long numOfRows, long pageNo) throws IOException, PublicApiException {
+
+    public List<ContentDto> getApiData(long pageNo) throws IOException, PublicApiException {
         // 오류를 대비해 요청한 개수의 10개 더 준비
-        String numOfRowsStr = Long.toString((numOfRows + 20) * pageNo);
+        long defaultNum = 5000 * (pageNo / 100 + 1);
+        String numOfRowsStr = Long.toString(defaultNum);
+
 
         // 데이터 요청
         HttpURLConnection conn = null;
@@ -121,8 +125,9 @@ public class ApiService {
 
     }
 
+    @Cacheable(value = "exhibitionListCache",key = "#numOfRows + '-' + #pageNo")
     public List<ContentResDto> getData(Long numOfRows, Long pageNo) throws IOException, PublicApiException {
-        List<ContentDto> apiData = getApiData(numOfRows, pageNo);
+        List<ContentDto> apiData = getApiData(pageNo);
 
         // 유효성 검증 후 List 형태로 반환
         return apiData.stream()
@@ -135,7 +140,7 @@ public class ApiService {
     }
 
     public List<ContentUserResDto> getDataByUserKey(Long userKey) throws IOException, PublicApiException {
-        List<ContentDto> apiData = getApiData(100, 1).stream().filter(ContentDto::isValid).toList();
+        List<ContentDto> apiData = getApiData(1).stream().filter(ContentDto::isValid).toList();
         List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
         log.error("-------------------------------------");
         log.error(orderList.toString());
