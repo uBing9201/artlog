@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -109,7 +110,7 @@ public class ApiCacheService {
         log.info(apiData.toString());
 
         if(orderList == null || orderList.isEmpty()) {
-            throw new PublicApiException("주문내역이 존재하지 않습니다.");
+            return new ArrayList<>();
         }
 
         List<ContentUserResDto> resDtoList =

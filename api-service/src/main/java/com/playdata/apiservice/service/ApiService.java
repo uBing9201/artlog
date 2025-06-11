@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,6 +76,10 @@ public class ApiService {
 
     public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException, IllegalArgumentException {
         List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
+        if(dataByUserKey == null || dataByUserKey.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         return dataByUserKey.stream()
                 .skip(numOfRows * (pageNo - 1))
                 .limit(numOfRows)
