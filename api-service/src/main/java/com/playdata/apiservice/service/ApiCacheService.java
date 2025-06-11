@@ -108,7 +108,7 @@ public class ApiCacheService {
         List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
         log.info(apiData.toString());
 
-        if(orderList == null) {
+        if(orderList == null || orderList.isEmpty()) {
             throw new PublicApiException("주문내역이 존재하지 않습니다.");
         }
 
