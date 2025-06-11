@@ -1,6 +1,7 @@
 package com.playdata.userservice.user.controller;
 
 import com.playdata.userservice.common.auth.JwtProvider;
+import com.playdata.userservice.common.auth.TokenUserInfo;
 import com.playdata.userservice.common.dto.CommonResDto;
 import com.playdata.userservice.common.dto.LoginResultDto;
 import com.playdata.userservice.common.entity.HintKeyType;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -248,6 +250,16 @@ public class UserController {
                 available
         );
         return ResponseEntity.ok(resDto);
+    }
+
+    @PostMapping("/convertAdmin")
+    public ResponseEntity<?> convertAdmin(@AuthenticationPrincipal TokenUserInfo userInfo) {
+        boolean isChanged = userService.convertAdmin(userInfo.getId());
+        if(isChanged) {
+            return ResponseEntity.ok().body(new  CommonResDto(HttpStatus.OK, "일반 사용자에서 관리자로 권한을 변경하였습니다.", userInfo.getId()));
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

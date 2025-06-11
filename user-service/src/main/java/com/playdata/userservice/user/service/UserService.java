@@ -12,6 +12,7 @@ import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
 import com.playdata.userservice.user.dto.response.UserCouponInsertResDto;
+import com.playdata.userservice.user.entity.Role;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.entity.UserCoupon;
 import com.playdata.userservice.user.feign.CouponFeignClient;
@@ -233,5 +234,27 @@ public class UserService {
     public boolean validCheckId(String userId) {
         // 중복일 경우 예외를 던지고, 아니면 그대로 true 리턴
         return userRepository.existsByUserId(userId);
+    }
+
+    /**
+     * 사용자의 권한을 ADMIN으로 변경
+     * @param id
+     * @return
+     */
+    public boolean convertAdmin(Long id) {
+        try {
+            // 사용자 찾기
+            User user = userRepository.findById(id).orElseThrow(
+                    () -> new EntityNotFoundException("존재하지 않는 사용자입니다.")
+            );
+
+            // 권한 업데이트
+            user.updateRole(Role.ADMIN);
+            userRepository.save(user);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

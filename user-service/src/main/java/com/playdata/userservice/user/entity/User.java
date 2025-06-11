@@ -108,4 +108,13 @@ public class User extends BaseTimeEntity {
         this.password = password;
     }
 
+
+    /**
+     * 권한 변경
+     * @param role
+     */
+    public void updateRole(Role role) {
+        this.role = Role.ADMIN;
+    }
+
 }
