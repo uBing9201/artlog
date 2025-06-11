@@ -252,11 +252,11 @@ public class UserController {
         return ResponseEntity.ok(resDto);
     }
 
-    @PostMapping("/convertAdmin")
-    public ResponseEntity<?> convertAdmin(@AuthenticationPrincipal TokenUserInfo userInfo) {
-        boolean isChanged = userService.convertAdmin(userInfo.getId());
+    @PostMapping("/convertAdmin/{userId}")
+    public ResponseEntity<?> convertAdmin(@PathVariable Long userId) {
+        boolean isChanged = userService.convertAdmin(userId);
         if(isChanged) {
-            return ResponseEntity.ok().body(new  CommonResDto(HttpStatus.OK, "일반 사용자에서 관리자로 권한을 변경하였습니다.", userInfo.getId()));
+            return ResponseEntity.ok().body(new  CommonResDto(HttpStatus.OK, "일반 사용자에서 관리자로 권한을 변경하였습니다.", userId));
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
