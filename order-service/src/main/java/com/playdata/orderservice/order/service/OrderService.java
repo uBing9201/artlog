@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -112,7 +113,7 @@ public class OrderService {
     public List<OrderInfoResDto> findByAll(Long userKey) throws EntityNotFoundException {
         List<Orders> orderList = orderRepository.findByUserKey(userKey);
         if(orderList.isEmpty()) {
-            throw new EntityNotFoundException("No orders found for userKey: " + userKey);
+            return new ArrayList<>();
         }
 
         return orderList.stream()

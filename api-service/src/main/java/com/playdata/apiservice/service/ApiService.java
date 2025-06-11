@@ -73,7 +73,7 @@ public class ApiService {
 
 
 
-    public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException {
+    public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException, IllegalArgumentException {
         List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
         return dataByUserKey.stream()
                 .skip(numOfRows * (pageNo - 1))

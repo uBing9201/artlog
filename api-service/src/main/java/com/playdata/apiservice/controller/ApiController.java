@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -50,7 +51,12 @@ public class ApiController {
 
     @GetMapping("/selectByUserKeyPaging")
     public ResponseEntity<?> selectByUserKeyPaging(@RequestParam Long userKey, @RequestParam Long pageNo, @RequestParam Long numOfRows) throws IOException, PublicApiException {
-        List<ContentUserResDto> resDto = apiService.getDataByUserKeyPaging(userKey, pageNo, numOfRows);
+        List<ContentUserResDto> resDto = null;
+        try {
+            resDto = apiService.getDataByUserKeyPaging(userKey, pageNo, numOfRows);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "모든 데이터를 조회하였습니다.", new ArrayList<>()));
+        }
         log.info(resDto.toString());
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "데이터 불러오기에 성공하였습니다.", resDto));
     }
