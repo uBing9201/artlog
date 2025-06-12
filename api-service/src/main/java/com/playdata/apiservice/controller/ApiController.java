@@ -53,7 +53,7 @@ public class ApiController {
     public ResponseEntity<?> selectByUserKeyPaging(@RequestParam Long userKey, @RequestParam Long pageNo, @RequestParam Long numOfRows) throws IOException, PublicApiException {
         List<ContentUserResDto> resDto = null;
         try {
-            resDto = apiService.getDataByUserKeyPaging(userKey, pageNo, numOfRows);
+            resDto = apiService.getDataByUserKeyPaging(userKey, numOfRows, pageNo);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "모든 데이터를 조회하였습니다.", new ArrayList<>()));
         }

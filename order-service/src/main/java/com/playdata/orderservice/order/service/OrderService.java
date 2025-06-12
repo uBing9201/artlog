@@ -113,7 +113,7 @@ public class OrderService {
     public List<OrderInfoResDto> findByAll(Long userKey) throws EntityNotFoundException {
         List<Orders> orderList = orderRepository.findByUserKey(userKey);
         if(orderList.isEmpty()) {
-            return new ArrayList<>();
+            return new ArrayList<OrderInfoResDto>();
         }
 
         return orderList.stream()
