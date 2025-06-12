@@ -76,14 +76,22 @@ public class ApiService {
 
     public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException, IllegalArgumentException {
         List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
+        log.info(dataByUserKey.toString());
+
         if(dataByUserKey == null || dataByUserKey.isEmpty()) {
             return new ArrayList<>();
         }
+        log.info(Long.toString((pageNo - 1) * numOfRows));
 
-        return dataByUserKey.stream()
-                .skip(numOfRows * (pageNo - 1))
+        List<ContentUserResDto> list = dataByUserKey.stream()
+                .skip((pageNo-1) * numOfRows)
                 .limit(numOfRows)
                 .toList();
+
+
+
+        log.info(list.toString());
+        return list;
     }
 
 }

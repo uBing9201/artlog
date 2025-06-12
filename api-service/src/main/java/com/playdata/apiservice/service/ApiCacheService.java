@@ -103,7 +103,6 @@ public class ApiCacheService {
                 .toList();
     }
 
-    @Cacheable(value = "userExhibitionListCache",key = "#userKey")
     public List<ContentUserResDto> getDataByUserKey(Long userKey) throws IOException, PublicApiException {
         List<ContentDto> apiData = getApiData(1).stream().filter(ContentDto::isValid).toList();
         List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
@@ -182,10 +181,12 @@ public class ApiCacheService {
         log.error("*******************************************");
 
         for (ContentUserResDto dto : resDtoList) {
+            log.info(dto.toString());
             Boolean isReviewed = reviewFeignClient.findByApiFeign(dto.getContentId(), userKey).getBody();
             dto.setIsReviewed(isReviewed);
         }
 
+        log.info(resDtoList.toString());
         return resDtoList;
 
     }
