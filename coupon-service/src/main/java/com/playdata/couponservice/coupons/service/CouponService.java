@@ -36,7 +36,7 @@ public class CouponService {
     public CouponSaveResDto insert(CouponReqDto dto) throws InvalidCouponRegisterException {
         // 쿠폰의 유효기간이 있다면 현재 만료되지는 않았는지 확인
         LocalDateTime expireDate = dto.getExpireDate();
-        if (expireDate != null && !expireDate.isBefore(LocalDateTime.now())) {
+        if (expireDate != null && expireDate.isBefore(LocalDateTime.now())) {
             throw new InvalidCouponRegisterException("Invalid Coupon Expire Date");
         }
 
@@ -116,7 +116,7 @@ public class CouponService {
         List<Coupon> coupons = couponRepository.findAll();
 
         return coupons.stream()
-                .filter(coupon -> isValid(coupon.getId()).isValid())
+//                .filter(coupon -> isValid(coupon.getId()).isValid())
                 .map(coupon ->
                         CouponResDto.builder()
                                 .id(coupon.getId())
