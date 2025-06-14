@@ -100,4 +100,10 @@ public class CouponController {
         Long id = couponService.findBySerial(serialNumber);
         return ResponseEntity.ok().body(id);
     }
+
+    @DeleteMapping("/delete/{serialNumber}")
+    public ResponseEntity<?> deleteBySerial(@PathVariable String serialNumber) throws EntityNotFoundException {
+        Long id = couponService.delete(serialNumber);
+        return ResponseEntity.ok().body(id);
+    }
 }

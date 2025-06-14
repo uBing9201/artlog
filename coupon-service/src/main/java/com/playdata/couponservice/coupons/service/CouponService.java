@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -210,10 +211,21 @@ public class CouponService {
 
     public Long findBySerial(String serialNumber) throws EntityNotFoundException {
         log.error(serialNumber);
-        List<Coupon> coupon = couponRepository.getCouponBySerialNumber(serialNumber);
+        Coupon coupon = couponRepository.getCouponBySerialNumber(serialNumber).orElseThrow(
+                () -> new EntityNotFoundException("쿠폰이 없습니다.")
+        );
 
-        if(coupon.isEmpty()) throw new EntityNotFoundException("Coupon Not Found");
+        return coupon.getId();
+    }
 
-        return coupon.get(0).getId();
+    public Long delete(String serialNumber) {
+        Coupon coupon = couponRepository.getCouponBySerialNumber(serialNumber).orElseThrow(
+                () -> new EntityNotFoundException("쿠폰이 없습니다.")
+        );
+
+        coupon.changeCouponActive();
+        couponRepository.save(coupon);
+
+        return coupon.getId();
     }
 }

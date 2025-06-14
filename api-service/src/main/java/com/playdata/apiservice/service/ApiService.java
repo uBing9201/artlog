@@ -88,8 +88,6 @@ public class ApiService {
                 .limit(numOfRows)
                 .toList();
 
-
-
         log.info(list.toString());
         return list;
     }
