@@ -17,4 +17,5 @@ public class CouponResDto {
     private String couponTitle;
     private LocalDateTime registDate;
     private LocalDateTime updateDate;
+    private boolean active;
 }

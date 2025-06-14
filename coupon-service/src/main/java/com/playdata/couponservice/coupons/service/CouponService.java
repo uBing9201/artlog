@@ -116,8 +116,9 @@ public class CouponService {
     public List<CouponResDto> findByAll() {
         List<Coupon> coupons = couponRepository.findAll();
 
+        coupons.forEach(coupon -> isValid(coupon.getId())); // 여기 로직 사실 중복임.. 나중에 시간되면 고칠게요.. ㅠㅠ
+
         return coupons.stream()
-                .filter(coupon -> isValid(coupon.getId()).isValid())
                 .map(coupon ->
                         CouponResDto.builder()
                                 .id(coupon.getId())
@@ -128,6 +129,7 @@ public class CouponService {
                                 .serialNumber(coupon.getSerialNumber())
                                 .registDate(coupon.getRegistDate())
                                 .updateDate(coupon.getUpdateDate())
+                                .active(coupon.getActive() == 'Y')
                                 .build()
                 )
                 .toList();
