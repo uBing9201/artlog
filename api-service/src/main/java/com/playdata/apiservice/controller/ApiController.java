@@ -25,16 +25,6 @@ public class ApiController {
     private final ApiService apiService;
     private final ApiCacheService apiCacheService;
 
-    /**
-     * @deprecated
-     */
-    @GetMapping("/get/{number}")
-    public ResponseEntity<?> get(@PathVariable Long number) throws IOException, PublicApiException {
-        List<ContentResDto> resDto = apiCacheService.getData(number, 1L);
-        log.info(resDto.toString());
-        return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "데이터 불러오기에 성공하였습니다.", resDto));
-    }
-
     @GetMapping("/select")
     public ResponseEntity<?> select(@RequestParam Long numOfRows, @RequestParam Long pageNo) throws IOException, PublicApiException {
         List<ContentResDto> resDto = apiCacheService.getData(numOfRows, pageNo);

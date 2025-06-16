@@ -34,46 +34,6 @@ import java.util.Objects;
 public class ApiService {
     private final ApiCacheService apiCacheService;
 
-    public List<ContentDto> first() throws IOException {
-//        String baseUrl = "http://api.kcisa.kr/openapi/API_CCA_145/request";
-//
-//        URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
-//                .queryParam("serviceKey", "50c4abb3-0b85-4348-809c-b1df4198f4ef")
-//                .queryParam("numOfRows", "5")
-//                .queryParam("pageNo", "1")
-//                .build(true)
-//                .toUri();
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
-//        String json = response.getBody();
-//
-//        try {
-//            ApiResponse parsed = objectMapper.readValue(json, ApiResponse.class);
-//            return parsed.getResponse().getBody().getItems().getItem();
-//        } catch (Exception e) {
-//            throw new RuntimeException("JSON 파싱 실패: " + e.getMessage(), e);
-//        }
-
-        return apiCacheService.getApiData(1);
-    }
-
-    public List<ContentResDto> getDataByNumOfRows(long number) throws IOException, PublicApiException {
-        List<ContentDto> apiData = apiCacheService.getApiData(1);
-
-        // 유효성 검증 후 List 형태로 반환
-        return apiData.stream()
-                .map(ContentDto::toResDto)
-                .filter(Objects::nonNull)
-                .distinct()
-                .limit(number)
-                .toList();
-    }
-
-
-
-
-
     public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException, IllegalArgumentException {
         List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
         log.info(dataByUserKey.toString());
