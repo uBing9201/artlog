@@ -14,10 +14,7 @@ import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
-import com.playdata.userservice.user.dto.response.HintKeyResDto;
-import com.playdata.userservice.user.dto.response.UserCouponInsertResDto;
-import com.playdata.userservice.user.dto.response.UserHintKeyResDto;
-import com.playdata.userservice.user.dto.response.UserInfoResDto;
+import com.playdata.userservice.user.dto.response.*;
 import com.playdata.userservice.user.entity.User;
 import com.playdata.userservice.user.entity.UserCoupon;
 import com.playdata.userservice.user.service.UserService;
@@ -260,6 +257,12 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/findAllUsers")
+    public ResponseEntity<?> findAllUsers() {
+        List<UserAdminResDto> resDto = userService.findAllUsers();
+        return ResponseEntity.ok().body(resDto);
     }
 
 }

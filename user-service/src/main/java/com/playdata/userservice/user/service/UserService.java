@@ -11,6 +11,7 @@ import com.playdata.userservice.user.dto.request.UserLoginDto;
 import com.playdata.userservice.user.dto.request.UserUpdatePw;
 import com.playdata.userservice.user.dto.request.UserUpdateReqDto;
 import com.playdata.userservice.user.dto.request.UserVerifyHintReqDto;
+import com.playdata.userservice.user.dto.response.UserAdminResDto;
 import com.playdata.userservice.user.dto.response.UserCouponInsertResDto;
 import com.playdata.userservice.user.entity.Role;
 import com.playdata.userservice.user.entity.User;
@@ -256,5 +257,22 @@ public class UserService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public List<UserAdminResDto> findAllUsers() {
+        List<User> userList = userRepository.findAll();
+        if(userList.isEmpty()) {
+           throw new EntityNotFoundException("존재하지 않는 사용자입니다.");
+        }
+
+
+        return userList.stream()
+                .map(user -> UserAdminResDto.builder()
+                        .id(user.getId())
+                        .email(user.getEmail())
+                        .username(user.getUserName())
+                        .role(user.getRole().toString()).build()
+                )
+                .toList();
     }
 }
