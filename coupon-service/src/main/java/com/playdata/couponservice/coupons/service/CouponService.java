@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,8 +116,9 @@ public class CouponService {
     public List<CouponResDto> findByAll() {
         List<Coupon> coupons = couponRepository.findAll();
 
+        coupons.forEach(coupon -> isValid(coupon.getId())); // 여기 로직 사실 중복임.. 나중에 시간되면 고칠게요.. ㅠㅠ
+
         return coupons.stream()
-//                .filter(coupon -> isValid(coupon.getId()).isValid())
                 .map(coupon ->
                         CouponResDto.builder()
                                 .id(coupon.getId())
@@ -127,6 +129,7 @@ public class CouponService {
                                 .serialNumber(coupon.getSerialNumber())
                                 .registDate(coupon.getRegistDate())
                                 .updateDate(coupon.getUpdateDate())
+                                .active(coupon.getActive() == 'Y')
                                 .build()
                 )
                 .toList();
@@ -210,10 +213,21 @@ public class CouponService {
 
     public Long findBySerial(String serialNumber) throws EntityNotFoundException {
         log.error(serialNumber);
-        List<Coupon> coupon = couponRepository.getCouponBySerialNumber(serialNumber);
+        Coupon coupon = couponRepository.getCouponBySerialNumber(serialNumber).orElseThrow(
+                () -> new EntityNotFoundException("쿠폰이 없습니다.")
+        );
 
-        if(coupon.isEmpty()) throw new EntityNotFoundException("Coupon Not Found");
+        return coupon.getId();
+    }
 
-        return coupon.get(0).getId();
+    public Long delete(String serialNumber) {
+        Coupon coupon = couponRepository.getCouponBySerialNumber(serialNumber).orElseThrow(
+                () -> new EntityNotFoundException("쿠폰이 없습니다.")
+        );
+
+        coupon.changeCouponActive();
+        couponRepository.save(coupon);
+
+        return coupon.getId();
     }
 }

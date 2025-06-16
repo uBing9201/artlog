@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
     Optional<Coupon> getCouponById(Long id);
 
-    List<Coupon> getCouponBySerialNumber(String serialNumber);
+    Optional<Coupon> getCouponBySerialNumber(String serialNumber);
 }

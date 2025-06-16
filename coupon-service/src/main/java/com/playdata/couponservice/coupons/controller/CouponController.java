@@ -83,6 +83,11 @@ public class CouponController {
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "해당하는 유저의 보유 쿠폰 정보를 조회하였습니다.", resDtoList));
     }
 
+    /**
+     * userKey 없이 사용자 쿠폰 조회
+     * @param userInfo
+     * @return
+     */
     @GetMapping("/findByUserKey")
     public ResponseEntity<?> findByUserKey(@AuthenticationPrincipal TokenUserInfo userInfo) {
         List<UserCouponInfoResDto> resDtoList = couponService.findByUserKey(userInfo.getId());
@@ -98,6 +103,18 @@ public class CouponController {
     @GetMapping("/findBySerial/{serialNumber}")
     public ResponseEntity<Long> findBySerial(@PathVariable String serialNumber) throws EntityNotFoundException {
         Long id = couponService.findBySerial(serialNumber);
+        return ResponseEntity.ok().body(id);
+    }
+
+    /**
+     * 쿠폰 삭제
+     * @param serialNumber
+     * @return
+     * @throws EntityNotFoundException
+     */
+    @DeleteMapping("/delete/{serialNumber}")
+    public ResponseEntity<?> deleteBySerial(@PathVariable String serialNumber) throws EntityNotFoundException {
+        Long id = couponService.delete(serialNumber);
         return ResponseEntity.ok().body(id);
     }
 }
