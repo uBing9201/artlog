@@ -225,7 +225,10 @@ public class CouponService {
                 () -> new EntityNotFoundException("쿠폰이 없습니다.")
         );
 
-        coupon.changeCouponActive();
+        if(coupon.getActive().equals('Y')) {
+            coupon.changeCouponActive();
+        }
+
         couponRepository.save(coupon);
 
         return coupon.getId();
