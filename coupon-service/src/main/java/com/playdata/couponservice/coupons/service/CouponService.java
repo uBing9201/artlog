@@ -93,7 +93,7 @@ public class CouponService {
         if (coupon.getActive().equals('N')) resDto.setValid(false);
 
         // 유효기간 검증
-        if (coupon.getExpireDate() != null && !coupon.getExpireDate().isBefore(LocalDateTime.now())) {
+        if (coupon.getExpireDate() != null && coupon.getExpireDate().isBefore(LocalDateTime.now())) {
             if(coupon.getActive().equals('Y')) {
                 coupon.changeCouponActive();
             }
