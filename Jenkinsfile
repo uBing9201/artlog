@@ -21,7 +21,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'config-secret', variable: 'configSecret')]) {
                     script {
-                        sh 'cp $configSecret config-service/src/main/resources/application-dev.yml'
+                        sh 'cp $configSecret config-service/src/main/resources/application-prod.yml'
                     }
                 }
             }
