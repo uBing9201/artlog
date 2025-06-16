@@ -123,7 +123,7 @@ public class ApiCacheService {
 
                                     // 기간 정보 추출을 위한 함수
                                     if (data.getPeriod() == null || data.getPeriod().isEmpty()) {
-                                        log.error("period가 유효하지 않습니다. : " + data.getPeriod());
+                                        log.error("period가 유효하지 않습니다. : {}", data.getPeriod());
                                         return null;
                                     } else {
                                         try {
@@ -145,9 +145,9 @@ public class ApiCacheService {
                                             // 3. 일수 계산 (양 끝 포함하려면 +1)
                                             periodL = ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
-                                            log.info("startDate:" + startDateStr + " endDate:" + endDateStr);
+                                            log.info("startDate:{} endDate:{}", startDateStr, endDateStr);
                                         } catch (Exception e) {
-                                            log.error("period 파싱에 실패하였습니다. : " + data.getPeriod());
+                                            log.error("period 파싱에 실패하였습니다. : {}", data.getPeriod());
                                             return null;
                                         }
                                     }
@@ -176,9 +176,9 @@ public class ApiCacheService {
                         .filter(Objects::nonNull)
                         .toList();
 
-        log.error("*******************************************");
-        log.error(resDtoList.toString());
-        log.error("*******************************************");
+        log.info("*******************************************");
+        log.info(resDtoList.toString());
+        log.info("*******************************************");
 
         for (ContentUserResDto dto : resDtoList) {
             log.info(dto.toString());
