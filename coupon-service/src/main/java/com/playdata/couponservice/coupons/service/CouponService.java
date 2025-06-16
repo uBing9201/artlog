@@ -94,15 +94,21 @@ public class CouponService {
 
         // 유효기간 검증
         if (coupon.getExpireDate() != null && !coupon.getExpireDate().isBefore(LocalDateTime.now())) {
-            coupon.changeCouponActive();
+            if(coupon.getActive().equals('Y')) {
+                coupon.changeCouponActive();
+            }
             resDto.setValid(false);
         }
 
         // 수량 검증
         if (coupon.getCount() != null && coupon.getCount() <= 0) {
-            coupon.changeCouponActive();
+            if(coupon.getActive().equals('Y')) {
+                coupon.changeCouponActive();
+            }
             resDto.setValid(false);
         }
+
+        couponRepository.save(coupon);
 
         return resDto;
     }
