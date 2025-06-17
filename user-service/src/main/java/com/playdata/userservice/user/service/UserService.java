@@ -275,4 +275,21 @@ public class UserService {
                 )
                 .toList();
     }
+
+    public boolean convertUser(Long id) {
+        try {
+            // 사용자 찾기
+            User user = userRepository.findById(id).orElseThrow(
+                    () -> new EntityNotFoundException("존재하지 않는 사용자입니다.")
+            );
+
+            // 권한 업데이트
+            user.updateRole(Role.USER);
+            userRepository.save(user);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
