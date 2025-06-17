@@ -12,6 +12,7 @@ spring:
             allowed-origins:
               - "http://localhost:5173"
               - "http://artlog-s3-instance-front-21974.s3-website.ap-northeast-2.amazonaws.com/"
+              - "https://artlog.shop"
             allowed-methods:
               - GET
               - POST
