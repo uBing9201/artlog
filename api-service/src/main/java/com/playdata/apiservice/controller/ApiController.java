@@ -50,5 +50,11 @@ public class ApiController {
         log.info(resDto.toString());
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "데이터 불러오기에 성공하였습니다.", resDto));
     }
+
+    @GetMapping("/feignUserData/{userKey}")
+    public ResponseEntity<List<ContentUserResDto>> feignUserData(@PathVariable Long userKey) throws IOException, PublicApiException {
+        List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
+        return ResponseEntity.ok().body(dataByUserKey);
+    }
 }
 
