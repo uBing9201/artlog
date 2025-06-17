@@ -176,6 +176,7 @@ public class ReviewService {
         }
 
         Map<String, ContentUserResDto> map = apiData.stream()
+                .distinct()
                 .collect(Collectors.toMap(ContentUserResDto::getContentId, data -> data));
 
         ContentUserResDto dummy = new ContentUserResDto();
