@@ -9,7 +9,6 @@ import com.playdata.apiservice.exception.PublicApiException;
 import com.playdata.apiservice.feign.OrderFeignClient;
 import com.playdata.apiservice.service.ApiCacheService;
 import com.playdata.apiservice.service.ApiService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -61,7 +60,7 @@ public class ApiController {
         List<OrderInfoResDto> orderListCache = apiCacheService.getOrderList(userKey);
 
         if(orderList == null) {
-            throw new EntityNotFoundException("주문 내역을 찾을 수 없습니다.");
+            throw new PublicApiException("주문 내역을 찾을 수 없습니다.");
         }
 
         if(orderList.size() != orderListCache.size()){
