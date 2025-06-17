@@ -217,11 +217,24 @@ public class CouponService {
         return resDto;
     }
 
+    @Transactional
     public Long findBySerial(String serialNumber) throws EntityNotFoundException {
         log.error(serialNumber);
         Coupon coupon = couponRepository.getCouponBySerialNumber(serialNumber).orElseThrow(
                 () -> new EntityNotFoundException("쿠폰이 없습니다.")
         );
+
+        if(!isValid(coupon.getId()).isValid()) {
+            throw new EntityNotFoundException("유효한 쿠폰이 없습니다.");
+        }
+
+        if(coupon.getCount() != null && coupon.getCount() > 0){
+            coupon.decreaseCount();
+            if(coupon.getCount() == 0){
+                coupon.changeCouponActive();
+            }
+            couponRepository.save(coupon);
+        }
 
         return coupon.getId();
     }
