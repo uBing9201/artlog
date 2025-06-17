@@ -102,9 +102,6 @@ public class CouponService {
 
         // 수량 검증
         if (coupon.getCount() != null && coupon.getCount() <= 0) {
-            if(coupon.getActive().equals('Y')) {
-                coupon.changeCouponActive();
-            }
             resDto.setValid(false);
         }
 
@@ -230,10 +227,6 @@ public class CouponService {
 
         if(coupon.getCount() != null && coupon.getCount() > 0){
             coupon.decreaseCount();
-            if(coupon.getCount() == 0){
-                coupon.changeCouponActive();
-            }
-            couponRepository.save(coupon);
         }
 
         return coupon.getId();
