@@ -40,4 +40,8 @@ public class Coupon extends BaseTimeEntity {
    public void changeCouponActive() {
        this.active = this.getActive() == 'Y' ? 'N' : 'Y';
    }
+
+   public void decreaseCount() {
+       this.count = this.count - 1;
+   }
 }
