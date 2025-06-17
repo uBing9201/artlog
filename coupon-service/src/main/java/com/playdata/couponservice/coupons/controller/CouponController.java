@@ -5,6 +5,7 @@ import com.playdata.couponservice.common.dto.CommonResDto;
 import com.playdata.couponservice.common.exception.InvalidCouponAccessException;
 import com.playdata.couponservice.common.exception.InvalidCouponRegisterException;
 import com.playdata.couponservice.coupons.dto.request.CouponReqDto;
+import com.playdata.couponservice.coupons.dto.request.CouponUpdateReqDto;
 import com.playdata.couponservice.coupons.dto.response.*;
 import com.playdata.couponservice.coupons.service.CouponService;
 import jakarta.persistence.EntityNotFoundException;
@@ -117,6 +118,18 @@ public class CouponController {
     @DeleteMapping("/delete/{serialNumber}")
     public ResponseEntity<?> deleteBySerial(@PathVariable String serialNumber) throws EntityNotFoundException {
         Long id = couponService.delete(serialNumber);
+        return ResponseEntity.ok().body(id);
+    }
+
+    /**
+     * 쿠폰 수정
+     * @param reqDto
+     * @return
+     * @throws InvalidCouponAccessException
+     */
+    @PostMapping("/update")
+    public ResponseEntity<?> update(@RequestBody @Valid CouponUpdateReqDto reqDto) throws InvalidCouponAccessException {
+        Long id = couponService.update(reqDto);
         return ResponseEntity.ok().body(id);
     }
 }

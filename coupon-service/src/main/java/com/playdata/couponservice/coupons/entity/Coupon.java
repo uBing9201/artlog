@@ -44,4 +44,12 @@ public class Coupon extends BaseTimeEntity {
    public void decreaseCount() {
        this.count = this.count - 1;
    }
+
+   public void updateCount(Integer count) {
+       this.count = count;
+   }
+
+   public void updateExpireDate(LocalDateTime expireDate) {
+       this.expireDate = expireDate;
+   }
 }

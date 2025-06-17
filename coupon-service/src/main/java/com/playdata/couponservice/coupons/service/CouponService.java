@@ -2,6 +2,7 @@ package com.playdata.couponservice.coupons.service;
 
 import com.playdata.couponservice.common.exception.InvalidCouponAccessException;
 import com.playdata.couponservice.common.exception.InvalidCouponRegisterException;
+import com.playdata.couponservice.coupons.dto.request.CouponUpdateReqDto;
 import com.playdata.couponservice.coupons.dto.response.*;
 import com.playdata.couponservice.coupons.dto.request.CouponReqDto;
 import com.playdata.couponservice.coupons.entity.Coupon;
@@ -9,6 +10,7 @@ import com.playdata.couponservice.coupons.feign.UserFeignClient;
 import com.playdata.couponservice.coupons.repository.CouponRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -102,9 +102,6 @@ public class CouponService {
 
         // 수량 검증
         if (coupon.getCount() != null && coupon.getCount() <= 0) {
-            if(coupon.getActive().equals('Y')) {
-                coupon.changeCouponActive();
-            }
             resDto.setValid(false);
         }
 
@@ -230,10 +227,6 @@ public class CouponService {
 
         if(coupon.getCount() != null && coupon.getCount() > 0){
             coupon.decreaseCount();
-            if(coupon.getCount() == 0){
-                coupon.changeCouponActive();
-            }
-            couponRepository.save(coupon);
         }
 
         return coupon.getId();
@@ -251,5 +244,46 @@ public class CouponService {
         couponRepository.save(coupon);
 
         return coupon.getId();
+    }
+
+    @Transactional
+    public Long update(@Valid CouponUpdateReqDto reqDto) {
+        // 쿠폰 찾기
+        Coupon coupon = couponRepository.findById(reqDto.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Coupon Not Found")
+        );
+
+        // 일단 쿠폰의 활성 상태를 Y로 만들어주기
+        if(coupon.getActive().equals('N')) {
+            coupon.changeCouponActive();
+        }
+
+        // 수량 변경
+        if(reqDto.getCount() != null) {
+            // 양수 값이 아니면 예외 발생 아니면 수량 수정
+            if(reqDto.getCount() <= 0) {
+                log.error("잘못된 수량 입력 : {}", reqDto.getCount());
+                throw new IllegalArgumentException("잘못된 수량 입력입니다.");
+            } else {
+                coupon.updateCount(reqDto.getCount());
+            }
+        }
+
+        // 유효기간 변경
+        if(reqDto.getExpireDate() != null) {
+            // 현재 날짜보다 전으로 만료기간을 입력하면 예외 발생 아니면 수량 수정
+            if(reqDto.getExpireDate().isBefore(LocalDateTime.now())) {
+                log.error("잘못된 유효기간 입력 : {}", reqDto.getExpireDate());
+                throw new IllegalArgumentException("잘못된 유효기간 입력입니다.");
+            } else {
+                coupon.updateExpireDate(reqDto.getExpireDate());
+            }
+        }
+
+        // 혹시 모르니까
+        isValid(coupon.getId());
+
+        couponRepository.save(coupon);
+        return reqDto.getId();
     }
 }

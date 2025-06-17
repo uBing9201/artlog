@@ -114,7 +114,7 @@ public class User extends BaseTimeEntity {
      * @param role
      */
     public void updateRole(Role role) {
-        this.role = Role.ADMIN;
+        this.role = role;
     }
 
 }
