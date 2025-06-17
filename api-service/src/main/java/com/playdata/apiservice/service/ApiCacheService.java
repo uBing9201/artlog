@@ -11,6 +11,7 @@ import com.playdata.apiservice.feign.OrderFeignClient;
 import com.playdata.apiservice.feign.ReviewFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -103,9 +105,15 @@ public class ApiCacheService {
                 .toList();
     }
 
+    @Cacheable(value = "OrderInfoListCache", key = "#userKey")
+    public List<OrderInfoResDto> getOrderList(Long userKey) {
+        return orderFeignClient.findByAllFeign(userKey).getBody();
+    }
+
+    @Cacheable(value = "exhibitionUserListCache", key = "#userKey")
     public List<ContentUserResDto> getDataByUserKey(Long userKey) throws IOException, PublicApiException {
         List<ContentDto> apiData = getApiData(1).stream().filter(ContentDto::isValid).toList();
-        List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
+        List<OrderInfoResDto> orderList = getOrderList(userKey);
         log.info(apiData.toString());
 
         if(orderList == null || orderList.isEmpty()) {
@@ -189,5 +197,20 @@ public class ApiCacheService {
         log.info(resDtoList.toString());
         return resDtoList;
 
+    }
+
+    public void deleteUserCache(Long userKey) {
+        deleteUserDataCache(userKey);
+        deleteUserOrderCache(userKey);
+    }
+
+    @CacheEvict(value = "exhibitionUserListCache", key = "#userKey", allEntries = true)
+    public void deleteUserDataCache(Long userKey) {
+        log.info("사용자 전시 데이터 캐시 삭제");
+    }
+
+    @CacheEvict(value = "OrderInfoListCache", key = "#userKey", allEntries = true)
+    public void deleteUserOrderCache(Long userKey) {
+        log.info("주문 정보 캐시 삭제");
     }
 }

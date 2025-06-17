@@ -9,9 +9,11 @@ import com.playdata.apiservice.dto.common.OrderInfoResDto;
 import com.playdata.apiservice.exception.PublicApiException;
 import com.playdata.apiservice.feign.OrderFeignClient;
 import com.playdata.apiservice.feign.ReviewFeignClient;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -33,11 +35,21 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ApiService {
     private final ApiCacheService apiCacheService;
+    private final OrderFeignClient orderFeignClient;
 
     public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException, IllegalArgumentException {
-        List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
-        log.info(dataByUserKey.toString());
+        List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
+        List<OrderInfoResDto> orderListCache = apiCacheService.getOrderList(userKey);
 
+        if(orderList == null) {
+            throw new EntityNotFoundException("주문 내역을 찾을 수 없습니다.");
+        }
+
+        if(orderList.size() != orderListCache.size()){
+            apiCacheService.deleteUserCache(userKey);
+        }
+
+        List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
         if(dataByUserKey == null || dataByUserKey.isEmpty()) {
             return new ArrayList<>();
         }

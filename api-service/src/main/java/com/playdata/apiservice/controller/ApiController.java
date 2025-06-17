@@ -4,9 +4,12 @@ import com.playdata.apiservice.dto.api.ContentDto;
 import com.playdata.apiservice.dto.api.ContentResDto;
 import com.playdata.apiservice.dto.api.ContentUserResDto;
 import com.playdata.apiservice.dto.common.CommonResDto;
+import com.playdata.apiservice.dto.common.OrderInfoResDto;
 import com.playdata.apiservice.exception.PublicApiException;
+import com.playdata.apiservice.feign.OrderFeignClient;
 import com.playdata.apiservice.service.ApiCacheService;
 import com.playdata.apiservice.service.ApiService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,7 @@ import java.util.List;
 public class ApiController {
     private final ApiService apiService;
     private final ApiCacheService apiCacheService;
+    private final OrderFeignClient  orderFeignClient;
 
     @GetMapping("/select")
     public ResponseEntity<?> select(@RequestParam Long numOfRows, @RequestParam Long pageNo) throws IOException, PublicApiException {
@@ -49,6 +53,23 @@ public class ApiController {
         }
         log.info(resDto.toString());
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "데이터 불러오기에 성공하였습니다.", resDto));
+    }
+
+    @GetMapping("/feignUserData/{userKey}")
+    public ResponseEntity<List<ContentUserResDto>> feignUserData(@PathVariable Long userKey) throws IOException, PublicApiException {
+        List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
+        List<OrderInfoResDto> orderListCache = apiCacheService.getOrderList(userKey);
+
+        if(orderList == null) {
+            throw new EntityNotFoundException("주문 내역을 찾을 수 없습니다.");
+        }
+
+        if(orderList.size() != orderListCache.size()){
+            apiCacheService.deleteUserCache(userKey);
+        }
+
+        List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
+        return ResponseEntity.ok().body(dataByUserKey);
     }
 }
 

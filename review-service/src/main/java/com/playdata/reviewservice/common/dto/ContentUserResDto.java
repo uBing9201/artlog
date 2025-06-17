@@ -1,4 +1,4 @@
-package com.playdata.reviewservice.review.dto.response;
+package com.playdata.reviewservice.common.dto;
 
 import lombok.*;
 
@@ -8,15 +8,16 @@ import java.util.Objects;
 @Getter @Setter @ToString
 @Builder @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewResDto {
+
+public class ContentUserResDto {
+    // (order) id, userKey, contentId, totalPrice, (order) active, registDate, isReviewed
     private Long id;
     private Long userKey;
     private String contentId;
-    private String reviewContent;
-    private String picUrl;
+    private Long totalPrice;
+    private Boolean active;
     private LocalDateTime registDate;
-    private LocalDateTime updateDate;
-
+    private Boolean isReviewed;
     private String contentTitle;
     private String contentThumbnail;
 
@@ -29,7 +30,7 @@ public class ReviewResDto {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ReviewResDto that)) return false;
+        if (!(o instanceof ContentUserResDto that)) return false;
         return Objects.equals(contentId, that.contentId);
     }
 

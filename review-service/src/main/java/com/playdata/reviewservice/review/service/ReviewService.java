@@ -1,6 +1,7 @@
 package com.playdata.reviewservice.review.service;
 
 import com.playdata.reviewservice.common.auth.TokenUserInfo;
+import com.playdata.reviewservice.common.dto.ContentUserResDto;
 import com.playdata.reviewservice.common.exception.FeignServiceException;
 import com.playdata.reviewservice.common.exception.InvalidAccessReviewException;
 import com.playdata.reviewservice.review.dto.response.ReviewIdentifyResDto;
@@ -11,15 +12,19 @@ import com.playdata.reviewservice.review.dto.response.ReviewDefaultResDto;
 import com.playdata.reviewservice.review.dto.response.ReviewResDto;
 import com.playdata.reviewservice.review.entity.Review;
 import com.playdata.reviewservice.review.entity.YnType;
+import com.playdata.reviewservice.review.feign.ApiFeignClient;
 import com.playdata.reviewservice.review.feign.OrderFeignClient;
 import com.playdata.reviewservice.review.repository.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +32,7 @@ import java.util.List;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderFeignClient orderFeignClient;
+    private final ApiFeignClient apiFeignClient;
 
     /**
      * 리뷰 등록
@@ -163,16 +169,40 @@ public class ReviewService {
             throw new EntityNotFoundException("해당 유저가 작성한 리뷰가 존재하지 않음.");
         }
 
+        List<ContentUserResDto> apiData = apiFeignClient.feignUserData(userKey).getBody();
+        if(apiData== null || apiData.isEmpty()) {
+            log.error("사용자의 주문 정보를 불러올 수 없음.");
+            throw new EntityNotFoundException("사용자의 주문 정보를 불러올 수 없음.");
+        }
+
+        Map<String, ContentUserResDto> map = apiData.stream()
+                .distinct()
+                .collect(Collectors.toMap(ContentUserResDto::getContentId, data -> data));
+
+        ContentUserResDto dummy = new ContentUserResDto();
+
         return reviewList.stream()
                 .filter(review -> review.getActive() != YnType.N && review.getDeleted() != YnType.Y)
-                .map(review -> ReviewResDto.builder()
-                        .id(review.getId())
-                        .userKey(review.getUserKey())
-                        .contentId(review.getContentId())
-                        .updateDate(review.getUpdateDate())
-                        .reviewContent(review.getReviewContent())
-                        .picUrl(review.getPirUrl())
-                        .build())
+                .map(review -> {
+                    String localId = review.getContentId();
+                    return ReviewResDto.builder()
+                            .id(review.getId())
+                            .userKey(review.getUserKey())
+                            .contentId(localId)
+                            .registDate(review.getRegistDate())
+                            .updateDate(review.getUpdateDate())
+                            .reviewContent(review.getReviewContent())
+                            .picUrl(review.getPirUrl())
+                            .contentCharge(map.getOrDefault(localId, dummy).getContentCharge())
+                            .contentPeriod(map.getOrDefault(localId, dummy).getContentPeriod())
+                            .contentThumbnail(map.getOrDefault(localId, dummy).getContentThumbnail())
+                            .endDate(map.getOrDefault(localId, dummy).getEndDate())
+                            .startDate(map.getOrDefault(localId, dummy).getStartDate())
+                            .contentVenue(map.getOrDefault(localId, dummy).getContentVenue())
+                            .contentTitle(map.getOrDefault(localId, dummy).getContentTitle())
+                            .contentUrl(map.getOrDefault(localId, dummy).getContentUrl())
+                            .build();
+                })
                 .toList();
     }
 
