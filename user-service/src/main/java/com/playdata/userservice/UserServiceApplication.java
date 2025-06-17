@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @EnableFeignClients
 public class UserServiceApplication {
-    //test
+
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);
     }
