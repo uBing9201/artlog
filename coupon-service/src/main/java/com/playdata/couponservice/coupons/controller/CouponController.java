@@ -114,7 +114,7 @@ public class CouponController {
      * @return
      * @throws EntityNotFoundException
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{serialNumber}")
     public ResponseEntity<?> deleteBySerial(@PathVariable String serialNumber) throws EntityNotFoundException {
         Long id = couponService.delete(serialNumber);
