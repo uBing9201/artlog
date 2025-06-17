@@ -10,7 +10,7 @@ services:
     ports:
       - "8888:8888"
     healthcheck: # 서비스 헬스 체크 설정
-      test: [ "CMD", "curl", "-f", "http://api-service:8888/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://config-service:8888/actuator/health" ]
       interval: 15s # 15초마다 한번씩 체크
       timeout: 5s # 5초 안에 완료되어야 한다.
       retries: 3 # 3번까지 재시도 하기
