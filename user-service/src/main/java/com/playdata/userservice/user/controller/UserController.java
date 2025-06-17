@@ -7,7 +7,7 @@ import com.playdata.userservice.common.dto.LoginResultDto;
 import com.playdata.userservice.common.entity.HintKeyType;
 import com.playdata.userservice.user.dto.request.UserCheckUpdatePw;
 import com.playdata.userservice.user.dto.request.UserCouponInsertReqDto;
-import com.playdata.userservice.user.dto.request.UserCouponResDto;
+import com.playdata.userservice.user.dto.response.UserCouponResDto;
 import com.playdata.userservice.user.dto.request.UserFindEmailAndPwReqDto;
 import com.playdata.userservice.user.dto.request.UserInsertReqDto;
 import com.playdata.userservice.user.dto.request.UserLoginDto;

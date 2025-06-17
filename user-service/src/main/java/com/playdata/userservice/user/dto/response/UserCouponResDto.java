@@ -1,8 +1,7 @@
-package com.playdata.userservice.user.dto.request;
+package com.playdata.userservice.user.dto.response;
 
 import com.playdata.userservice.user.entity.UserCoupon;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
