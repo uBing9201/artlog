@@ -42,6 +42,5 @@ public class ApiController {
         log.info(resDto.toString());
         return ResponseEntity.ok().body(new CommonResDto(HttpStatus.OK, "데이터 불러오기에 성공하였습니다.", resDto));
     }
-    //test
 }
 
