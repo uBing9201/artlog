@@ -259,6 +259,16 @@ public class UserController {
         }
     }
 
+    @PostMapping("/convertUser/{userId}")
+    public ResponseEntity<?> convertUser(@PathVariable Long userId) {
+        boolean isChanged = userService.convertUser(userId);
+        if(isChanged) {
+            return ResponseEntity.ok().body(new  CommonResDto(HttpStatus.OK, "관리자에서 일반 사용자로 권한을 변경하였습니다.", userId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/findAllUsers")
     public ResponseEntity<?> findAllUsers() {
         List<UserAdminResDto> resDto = userService.findAllUsers();
