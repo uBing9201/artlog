@@ -14,7 +14,7 @@ import java.util.List;
 
 @FeignClient(name = "api-service")
 public interface ApiFeignClient {
-    @GetMapping("/feignUserData/{userKey}")
+    @GetMapping("/api/feignUserData/{userKey}")
     ResponseEntity<List<ContentUserResDto>> feignUserData(@PathVariable Long userKey);
 
 }
