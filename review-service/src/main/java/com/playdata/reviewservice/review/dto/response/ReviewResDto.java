@@ -14,4 +14,6 @@ public class ReviewResDto {
     private String reviewContent;
     private String picUrl;
     private LocalDateTime updateDate;
+
+
 }

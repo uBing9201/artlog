@@ -103,6 +103,7 @@ public class ApiCacheService {
                 .toList();
     }
 
+    @Cacheable(value = "exhibitionUserListCache", key = "#userKey")
     public List<ContentUserResDto> getDataByUserKey(Long userKey) throws IOException, PublicApiException {
         List<ContentDto> apiData = getApiData(1).stream().filter(ContentDto::isValid).toList();
         List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
