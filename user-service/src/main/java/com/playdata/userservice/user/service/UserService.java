@@ -117,9 +117,15 @@ public class UserService {
      * @return
      */
     public User findByHint(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("가입된 이메일이 존재하지 않습니다.")
         );
+
+        if(user.getActive() == YnType.NO) {
+            throw new EntityNotFoundException("가입된 이메일이 존재하지 않습니다.");
+        }
+
+        return user;
     }
 
     /**
@@ -144,9 +150,15 @@ public class UserService {
      * @return
      */
     public User findByHint(UserFindEmailAndPwReqDto reqDto) {
-        return userRepository.findByUserIdAndEmail(reqDto.getUserId(), reqDto.getEmail()).orElseThrow(
+        User user = userRepository.findByUserIdAndEmail(reqDto.getUserId(), reqDto.getEmail()).orElseThrow(
                 () -> new EntityNotFoundException("가입된 회원이 존재하지 않습니다.")
         );
+
+        if(user.getActive() == YnType.NO) {
+            throw new EntityNotFoundException("가입된 회원이 존재하지 않습니다.");
+        }
+
+        return user;
     }
 
     /**

@@ -289,6 +289,11 @@ public class UserController {
         return ResponseEntity.ok().body(resDto);
     }
 
+    /**
+     * 사용자 쿠폰 사용 처리
+     * @param id
+     * @return
+     */
     @DeleteMapping("/deleteUserCoupon/{id}")
     public ResponseEntity<?> deleteUserCoupon(@PathVariable Long id) {
         userService.deleteUserCoupon(id);
