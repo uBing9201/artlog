@@ -121,17 +121,12 @@ public class ApiCacheService {
         return resDtoList;
     }
 
-    public void deleteUserCache(Long userKey) {
-        deleteUserDataCache(userKey);
-        deleteUserOrderCache(userKey);
-    }
-
-    @CacheEvict(value = "exhibitionUserListCache", key = "#userKey", allEntries = true)
+    @CacheEvict(value = "exhibitionUserListCache", key = "#userKey", allEntries = true, beforeInvocation = true)
     public void deleteUserDataCache(Long userKey) {
         log.info("사용자 전시 데이터 캐시 삭제");
     }
 
-    @CacheEvict(value = "OrderInfoListCache", key = "#userKey", allEntries = true)
+    @CacheEvict(value = "OrderInfoListCache", key = "#userKey", allEntries = true, beforeInvocation = true)
     public void deleteUserOrderCache(Long userKey) {
         log.info("주문 정보 캐시 삭제");
     }
