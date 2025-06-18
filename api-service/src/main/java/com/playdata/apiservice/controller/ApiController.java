@@ -64,7 +64,7 @@ public class ApiController {
         }
 
         if(orderList.size() != orderListCache.size()){
-            apiCacheService.deleteUserCache(userKey);
+            apiService.deleteUserCache(userKey);
         }
 
         List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);

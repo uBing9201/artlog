@@ -130,4 +130,9 @@ public class ApiCacheService {
     public void deleteUserOrderCache(Long userKey) {
         log.info("주문 정보 캐시 삭제");
     }
+
+    @CacheEvict(value = "ExhibitionRawData", allEntries = true, beforeInvocation = true)
+    public void deleteOrderCache() {
+        log.info("전시 정보 캐시 삭제");
+    }
 }
