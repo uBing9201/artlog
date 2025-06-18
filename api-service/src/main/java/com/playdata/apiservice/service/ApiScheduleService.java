@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.TimeZone;
 
 @Service
 @Slf4j
@@ -14,7 +15,7 @@ public class ApiScheduleService {
     private final ApiCacheService apiCacheService;
     private final ApiDataService apiDataService;
 
-    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void checkApiSchedule(){
         try {
             apiCacheService.deleteOrderCache();
