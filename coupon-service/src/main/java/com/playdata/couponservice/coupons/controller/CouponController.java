@@ -127,6 +127,7 @@ public class CouponController {
      * @return
      * @throws InvalidCouponAccessException
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update")
     public ResponseEntity<?> update(@RequestBody @Valid CouponUpdateReqDto reqDto) throws InvalidCouponAccessException {
         Long id = couponService.update(reqDto);

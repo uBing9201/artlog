@@ -48,7 +48,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Long id = Long.valueOf(claim.getSubject());
             // ROLE 생기면 추가
             String role = claim.get("role", String.class);
-            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
             // SecurityContextHolder에 username 추가
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(new TokenUserInfo(id, Role.valueOf(role)), null, authorities);
