@@ -293,4 +293,20 @@ public class UserService {
             return false;
         }
     }
+
+    @Transactional
+    public void deleteUserCoupon(Long id) {
+        // 사용자 쿠폰 찾기
+        UserCoupon userCoupon = userCouponRepository.getUserCouponById(id).orElseThrow(
+                () -> new EntityNotFoundException("해당하는 사용자의 쿠폰이 존재하지 않습니다.")
+        );
+
+        // 활성화 상태라면 active 상태 바꾸기
+        if(userCoupon.getActive() ==  YnType.YES) {
+            userCoupon.changeActive();
+        }
+
+        // 저장
+        userCouponRepository.save(userCoupon);
+    }
 }

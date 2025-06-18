@@ -249,6 +249,11 @@ public class UserController {
         return ResponseEntity.ok(resDto);
     }
 
+    /**
+     * 사용자 -> 관리자 권한 변경
+     * @param userId
+     * @return
+     */
     @PostMapping("/convertAdmin/{userId}")
     public ResponseEntity<?> convertAdmin(@PathVariable Long userId) {
         boolean isChanged = userService.convertAdmin(userId);
@@ -259,6 +264,11 @@ public class UserController {
         }
     }
 
+    /**
+     * 관리자 -> 사용자 권한 변경
+     * @param userId
+     * @return
+     */
     @PostMapping("/convertUser/{userId}")
     public ResponseEntity<?> convertUser(@PathVariable Long userId) {
         boolean isChanged = userService.convertUser(userId);
@@ -269,10 +279,20 @@ public class UserController {
         }
     }
 
+    /**
+     * 유저 전체 조회
+     * @return
+     */
     @PostMapping("/findAllUsers")
     public ResponseEntity<?> findAllUsers() {
         List<UserAdminResDto> resDto = userService.findAllUsers();
         return ResponseEntity.ok().body(resDto);
+    }
+
+    @DeleteMapping("/deleteUserCoupon/{id}")
+    public ResponseEntity<?> deleteUserCoupon(@PathVariable Long id) {
+        userService.deleteUserCoupon(id);
+        return ResponseEntity.ok().body(id);
     }
 
 }

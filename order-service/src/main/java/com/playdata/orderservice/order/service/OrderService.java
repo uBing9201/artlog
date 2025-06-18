@@ -10,6 +10,7 @@ import com.playdata.orderservice.order.dto.response.OrderSaveResDto;
 import com.playdata.orderservice.order.dto.response.ReviewIdentifyResDto;
 import com.playdata.orderservice.order.entity.Orders;
 import com.playdata.orderservice.order.entity.YnType;
+import com.playdata.orderservice.order.feign.UserFeignClient;
 import com.playdata.orderservice.order.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final UserFeignClient userFeignClient;
 
     /**
      * 주문 등록
@@ -44,6 +46,14 @@ public class OrderService {
                 .build();
 
         orderRepository.save(order);
+
+        // TODO: 여기에 유저 쿠폰 무효화 처리
+
+        try {
+            userFeignClient.deleteUserCoupon(dto.getUserCouponKey());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("존재하지 않는 사용자 쿠폰입니다.");
+        }
 
         return OrderSaveResDto.builder()
                 .userKey(userInfo.getId())
