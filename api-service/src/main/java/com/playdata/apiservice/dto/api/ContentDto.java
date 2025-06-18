@@ -141,17 +141,32 @@ public class ContentDto {
             }
         }
 
-        return ContentResDto.builder()
-                .contentId(this.localId)
-                .contentTitle(this.title)
-                .contentVenue(this.eventSite)
-                .contentUrl(this.url)
-                .contentCharge(Long.parseLong(this.charge))
-                .contentThumbnail(this.imageObject)
-                .contentPeriod(periodL)
-                .startDate(startDateStr)
-                .endDate(endDateStr)
-                .build();
+
+        try {
+            return ContentResDto.builder()
+                    .contentId(this.localId)
+                    .contentTitle(this.title)
+                    .contentVenue(this.eventSite)
+                    .contentUrl(this.url)
+                    .contentCharge(Long.parseLong(this.charge))
+                    .contentThumbnail(this.imageObject)
+                    .contentPeriod(periodL)
+                    .startDate(startDateStr)
+                    .endDate(endDateStr)
+                    .build();
+        } catch (NumberFormatException e) {
+            return ContentResDto.builder()
+                    .contentId(this.localId)
+                    .contentTitle(this.title)
+                    .contentVenue(this.eventSite)
+                    .contentUrl(this.url)
+                    .contentCharge(0L)
+                    .contentThumbnail(this.imageObject)
+                    .contentPeriod(periodL)
+                    .startDate(startDateStr)
+                    .endDate(endDateStr)
+                    .build();
+        }
     }
 
     private boolean isImageObjectValid() {
@@ -163,7 +178,7 @@ public class ContentDto {
     }
 
     private boolean isChargeValid() {
-        if (this.charge == null || this.charge.isEmpty() || this.charge.equals("-") || this.charge.equals("무료") || this.charge.equals("미정")) {
+        if (this.charge == null || this.charge.isEmpty() || this.charge.equals("-") || this.charge.equals("무료") || this.charge.equals("미정") || this.charge.equals("\"\"")) {
             this.charge = "0";
         } else if (!this.charge.matches("[0-9]+")) {
             if (this.charge.contains("원")) {
