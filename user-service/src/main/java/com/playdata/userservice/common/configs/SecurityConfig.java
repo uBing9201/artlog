@@ -33,7 +33,7 @@ public class SecurityConfig {
                                 "/user/findByHintKey", "/user/verifyUserIdHint",
                                 "/user/findByUserIdAndEmail", "/user/verifyPasswordHint",
                                 "/user/updatePw/{id}", "/user/findCouponById/{id}","/user/hintKeys",
-                                "/user/checkId/{userId}").permitAll()
+                                "/user/checkId/{userId}", "/user/deleteUserCoupon/{id}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

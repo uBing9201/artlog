@@ -117,9 +117,15 @@ public class UserService {
      * @return
      */
     public User findByHint(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("가입된 이메일이 존재하지 않습니다.")
         );
+
+        if(user.getActive() == YnType.NO) {
+            throw new EntityNotFoundException("가입된 이메일이 존재하지 않습니다.");
+        }
+
+        return user;
     }
 
     /**
@@ -144,9 +150,15 @@ public class UserService {
      * @return
      */
     public User findByHint(UserFindEmailAndPwReqDto reqDto) {
-        return userRepository.findByUserIdAndEmail(reqDto.getUserId(), reqDto.getEmail()).orElseThrow(
+        User user = userRepository.findByUserIdAndEmail(reqDto.getUserId(), reqDto.getEmail()).orElseThrow(
                 () -> new EntityNotFoundException("가입된 회원이 존재하지 않습니다.")
         );
+
+        if(user.getActive() == YnType.NO) {
+            throw new EntityNotFoundException("가입된 회원이 존재하지 않습니다.");
+        }
+
+        return user;
     }
 
     /**
@@ -292,5 +304,21 @@ public class UserService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Transactional
+    public void deleteUserCoupon(Long id) {
+        // 사용자 쿠폰 찾기
+        UserCoupon userCoupon = userCouponRepository.getUserCouponById(id).orElseThrow(
+                () -> new EntityNotFoundException("해당하는 사용자의 쿠폰이 존재하지 않습니다.")
+        );
+
+        // 활성화 상태라면 active 상태 바꾸기
+        if(userCoupon.getActive() ==  YnType.YES) {
+            userCoupon.changeActive();
+        }
+
+        // 저장
+        userCouponRepository.save(userCoupon);
     }
 }

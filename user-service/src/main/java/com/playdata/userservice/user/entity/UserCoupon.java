@@ -44,4 +44,8 @@ public class UserCoupon extends BaseTimeEntity {
     @Builder.Default
     private YnType active = YnType.YES;
 
+    public void changeActive(){
+        this.active = this.active == YnType.YES ? YnType.NO : YnType.YES;
+    }
+
 }
