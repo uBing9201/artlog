@@ -21,15 +21,20 @@ public class ApiService {
 
     public List<ContentUserResDto> getDataByUserKeyPaging(Long userKey, Long numOfRows, Long pageNo) throws IOException, PublicApiException, IllegalArgumentException {
         List<OrderInfoResDto> orderList = orderFeignClient.findByAllFeign(userKey).getBody();
+        log.info("-----------------------------------------------------------------------------------");
+        log.info("Feign으로 받아온 Order List: {}", orderList);
         List<OrderInfoResDto> orderListCache = apiCacheService.getOrderList(userKey);
+        log.info("캐싱 되어있는 Order List: {}",orderListCache);
+        log.info("-----------------------------------------------------------------------------------");
 
         if(orderList == null) {
             throw new PublicApiException("주문 내역을 찾을 수 없습니다.");
         }
 
         if(orderList.size() != orderListCache.size()){
-            apiCacheService.deleteUserCache(userKey);
+            deleteUserCache(userKey);
         }
+
 
         List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
         if(dataByUserKey == null || dataByUserKey.isEmpty()) {
@@ -46,4 +51,8 @@ public class ApiService {
         return list;
     }
 
+    public void deleteUserCache(Long userKey) {
+        apiCacheService.deleteUserDataCache(userKey);
+        apiCacheService.deleteUserOrderCache(userKey);
+    }
 }
