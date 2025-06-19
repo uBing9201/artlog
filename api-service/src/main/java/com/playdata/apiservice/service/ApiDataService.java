@@ -30,7 +30,7 @@ public class ApiDataService {
     @Cacheable(value = "ExhibitionRawData", key = "#pageNo")
     public List<ContentResDto> getApiData(long pageNo) throws IOException, PublicApiException {
         // 오류를 대비해 요청한 개수의 10개 더 준비
-        long defaultNum = 3000 + (100 * pageNo);
+        long defaultNum = 5000 + (100 * pageNo);
         String numOfRowsStr = Long.toString(defaultNum);
 
 
