@@ -35,6 +35,18 @@ public class ApiService {
             deleteUserCache(userKey);
         }
 
+        boolean flag = true;
+        for (int i = 0; i < orderList.size(); i++) {
+            OrderInfoResDto order = orderList.get(i);
+            if(!orderListCache.get(i).equals(order)) {
+                flag = false;
+                break;
+            }
+        }
+
+        if(!flag) {
+            deleteUserCache(userKey);
+        }
 
         List<ContentUserResDto> dataByUserKey = apiCacheService.getDataByUserKey(userKey);
         if(dataByUserKey == null || dataByUserKey.isEmpty()) {
