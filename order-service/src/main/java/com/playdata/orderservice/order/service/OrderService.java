@@ -49,11 +49,14 @@ public class OrderService {
 
         // TODO: 여기에 유저 쿠폰 무효화 처리
 
-        try {
-            userFeignClient.deleteUserCoupon(dto.getUserCouponKey());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("존재하지 않는 사용자 쿠폰입니다.");
+        if(dto.getUserCouponKey()!=null){
+            try {
+                userFeignClient.deleteUserCoupon(dto.getUserCouponKey());
+            } catch (Exception e) {
+                throw new IllegalArgumentException("존재하지 않는 사용자 쿠폰입니다.");
+            }
         }
+
 
         return OrderSaveResDto.builder()
                 .userKey(userInfo.getId())
