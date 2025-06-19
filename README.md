@@ -81,7 +81,7 @@ Spring Boot, Spring Cloud, React, MySQL, AWS(EC2, S3), Git, Github
 
     main 머지 시 Webhook 트리거
 
-    Jenkins 빌드 → Docker 이미지 생성 → Docker Hub 푸시 → 서비스 재배포
+    Jenkins 빌드 → Docker 이미지 생성 → AWS ECR 푸시 → 서비스 재배포
 
     MSA 구조 (gateway, config, eureka, 각 서비스) 모두 Docker Compose로 관리
 
