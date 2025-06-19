@@ -48,8 +48,10 @@ public class ApiCacheService {
             log.error("크기 측정 실패 ㅠㅠ");
         }
 
+
         // 유효성 검증 후 List 형태로 반환
         return apiData.stream()
+                .filter(data -> LocalDate.parse(data.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).isAfter(LocalDate.now()))
                 .skip(numOfRows * (pageNo - 1))
                 .limit(numOfRows)
                 .toList();
