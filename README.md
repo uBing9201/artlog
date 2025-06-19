@@ -176,6 +176,12 @@ Spring Boot, Spring Cloud, React, MySQL, AWS(EC2, S3), Git, Github
 
 ## ------------------------------------------------------------------------------------------
 
+## MSA 아키텍처 설계도
+
+https://docs.google.com/spreadsheets/d/1AnH1tIr7nVC0chcegOQkAXPOEpxHRhhUNtokbMcqJYY/edit?gid=1099589851#gid=1099589851
+
+## ------------------------------------------------------------------------------------------
+
 ## 인터페이스 설계서
 
 https://docs.google.com/spreadsheets/d/1AnH1tIr7nVC0chcegOQkAXPOEpxHRhhUNtokbMcqJYY/edit?gid=1561101686#gid=1561101686
